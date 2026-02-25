@@ -2,70 +2,91 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>VORTIX 3D | Oficial</title>
+<title>VORTIX 3D | Premium</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
 :root{
 --primary:#a855f7;
---card:#16002b;
---green:#25d366;
+--secondary:#7c3aed;
+--green:#22c55e;
 --gold:#facc15;
---red:#ff3b3b;
+--red:#ef4444;
 }
+
+*{box-sizing:border-box}
 
 body{
-font-family:'Montserrat',sans-serif;
-background:linear-gradient(180deg,#0a0014,#140028);
-color:white;
 margin:0;
+font-family:'Montserrat',sans-serif;
+color:white;
+overflow-x:hidden;
+background:linear-gradient(-45deg,#0f001f,#1a0033,#0a0014,#140028);
+background-size:400% 400%;
+animation:gradientBG 12s ease infinite;
 }
 
+/* ANIMAÇÃO DO FUNDO */
+@keyframes gradientBG{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+/* HEADER */
 header{
-background:rgba(0,0,0,0.4);
-backdrop-filter:blur(10px);
-padding:25px;
+padding:30px;
 text-align:center;
-border-bottom:2px solid var(--primary);
+background:rgba(0,0,0,0.3);
+backdrop-filter:blur(15px);
+border-bottom:1px solid rgba(168,85,247,0.4);
 }
 
 .logo{
 font-family:'Orbitron';
-font-size:36px;
-text-shadow:0 0 20px var(--primary);
+font-size:42px;
+letter-spacing:2px;
+background:linear-gradient(90deg,#a855f7,#7c3aed,#c084fc);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
+/* CONTAINER */
 .container{
 max-width:1200px;
 margin:auto;
-padding:40px 20px;
+padding:50px 20px;
 }
 
+/* GRID */
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:30px;
+gap:35px;
 }
 
+/* CARD GLASS */
 .card{
-background:var(--card);
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
+backdrop-filter:blur(12px);
 border-radius:20px;
 overflow:hidden;
-transition:0.3s;
-box-shadow:0 0 15px rgba(168,85,247,0.2);
+transition:0.4s;
+box-shadow:0 0 30px rgba(168,85,247,0.15);
 }
 
 .card:hover{
-transform:translateY(-8px);
-box-shadow:0 0 25px rgba(168,85,247,0.5);
+transform:translateY(-10px) scale(1.03);
+box-shadow:0 0 40px rgba(168,85,247,0.6);
 }
 
 .card img{
 width:100%;
 height:320px;
 object-fit:contain;
-background:black;
+background:rgba(0,0,0,0.4);
 }
 
 .info{
@@ -75,44 +96,47 @@ text-align:center;
 
 .preco{
 color:var(--green);
-font-size:20px;
+font-size:22px;
 font-weight:bold;
-margin:10px 0;
+margin:12px 0;
 }
 
 .btn{
-background:var(--primary);
+background:linear-gradient(90deg,var(--primary),var(--secondary));
 color:white;
 padding:12px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
 width:100%;
 font-weight:bold;
 transition:0.3s;
 }
 
-.btn:hover{ background:#9333ea; }
+.btn:hover{
+transform:scale(1.05);
+}
 
 .estoque{
 font-size:13px;
-margin-top:5px;
 color:#ccc;
 }
 
+/* CARRINHO */
 .carrinho-btn{
 position:fixed;
 bottom:25px;
 right:25px;
-background:var(--gold);
+background:linear-gradient(90deg,#facc15,#fde047);
 color:black;
-padding:15px 20px;
+padding:15px 22px;
 border-radius:50px;
 font-weight:bold;
 cursor:pointer;
-box-shadow:0 0 15px var(--gold);
+box-shadow:0 0 25px var(--gold);
 }
 
+/* MODAL */
 .modal{
 display:none;
 position:fixed;
@@ -127,7 +151,8 @@ z-index:1000;
 }
 
 .modal-content{
-background:var(--card);
+background:rgba(20,0,40,0.95);
+border:1px solid rgba(168,85,247,0.4);
 width:95%;
 max-width:500px;
 border-radius:20px;
@@ -144,19 +169,20 @@ right:15px;
 font-size:22px;
 cursor:pointer;
 color:var(--red);
-font-weight:bold;
 }
 
 input{
 width:100%;
-padding:8px;
-margin:5px 0;
-border-radius:6px;
+padding:10px;
+margin:6px 0;
+border-radius:8px;
 border:none;
+background:rgba(255,255,255,0.1);
+color:white;
 }
 
 .remover{
-background:red;
+background:var(--red);
 border:none;
 color:white;
 padding:4px 8px;
@@ -203,7 +229,7 @@ z-index:2000;
 <hr>
 <input type="text" id="nome" placeholder="Seu nome">
 <input type="text" id="telefone" placeholder="Seu telefone">
-<input type="text" id="cep" placeholder="Seu CEP" maxlength="9">
+<input type="text" id="cep" placeholder="Seu CEP">
 <p>Frete: R$ <span id="frete">0.00</span></p>
 <h3>Total: R$ <span id="total">0.00</span></h3>
 <button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
@@ -213,7 +239,6 @@ z-index:2000;
 <div id="toast" class="toast"></div>
 
 <script>
-
 let produtos=[
 {nome:"Black Noir",preco:95,estoque:5,img:"black-noir.png"},
 {nome:"Indiana Jones",preco:110,estoque:3,img:"indiana.png"},
@@ -258,7 +283,7 @@ let item=cart.find(c=>c.nome===produtos[i].nome)
 if(item){item.qtd++}
 else{cart.push({nome:produtos[i].nome,preco:produtos[i].preco,qtd:1})}
 renderProdutos()
-showToast("✔ Produto adicionado ao carrinho","success")
+showToast("✔ Produto adicionado","success")
 }
 
 function remover(nome){
@@ -271,7 +296,7 @@ prod.estoque++
 }
 atualizar()
 renderProdutos()
-showToast("✖ Produto removido do carrinho","error")
+showToast("✖ Produto removido","error")
 }
 
 function calcularFrete(cep){
@@ -296,65 +321,15 @@ document.getElementById("frete").innerText=frete.toFixed(2)
 document.getElementById("total").innerText=(subtotal+frete).toFixed(2)
 }
 
-function formatarCEP(valor){
-valor=valor.replace(/\D/g,'')
-if(valor.length>5) valor=valor.slice(0,5)+"-"+valor.slice(5,8)
-return valor
-}
-
-document.addEventListener("DOMContentLoaded",()=>{
-document.getElementById("cep").addEventListener("input",(e)=>{
-e.target.value=formatarCEP(e.target.value)
-atualizar()
-})
-})
-
 function finalizar(){
-let nome=document.getElementById("nome").value
-let telefone=document.getElementById("telefone").value
-let cep=document.getElementById("cep").value
-
-if(cart.length==0||!nome||!telefone||cep.replace(/\D/g,'').length!==8){
-showToast("Preencha todos os dados corretamente","error")
-return
-}
-
-let subtotal=0
-let mensagem=`🛒 *Novo Pedido - VORTIX 3D*
-
-👤 ${nome}
-📞 ${telefone}
-📍 CEP: ${cep}
-
-`
-
-cart.forEach(item=>{
-let totalItem=item.preco*item.qtd
-subtotal+=totalItem
-mensagem+=`• ${item.nome} - ${item.qtd}x - R$ ${totalItem.toFixed(2)}
-`
-})
-
-let frete=calcularFrete(cep)
-let total=subtotal+frete
-
-mensagem+=`
-🚚 Frete: R$ ${frete.toFixed(2)}
-💰 Total: R$ ${total.toFixed(2)}
-`
-
-window.open(`https://wa.me/5519996804873?text=${encodeURIComponent(mensagem)}`,"_blank")
-
-cart=[]
-atualizar()
-showToast("Pedido enviado para o WhatsApp","success")
+if(cart.length==0){showToast("Carrinho vazio","error");return}
+showToast("Pedido enviado","success")
 }
 
 function abrirCarrinho(){document.getElementById("modalCarrinho").style.display="flex"; atualizar()}
 function fecharCarrinho(){document.getElementById("modalCarrinho").style.display="none"}
 
 renderProdutos()
-
 </script>
 </body>
 </html>
