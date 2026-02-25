@@ -7,40 +7,126 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
 <style>
-:root { --primary:#a855f7; --bg:#0d001a; --card:#1a0033; --green:#25d366; --gold:#facc15; }
-body { font-family:'Montserrat',sans-serif; background:var(--bg); color:white; margin:0; }
-header { background:var(--card); padding:30px; text-align:center; border-bottom:3px solid var(--primary); }
-.logo { font-family:'Orbitron'; font-size:35px; text-shadow:0 0 15px var(--primary); }
+:root{
+--primary:#a855f7;
+--bg:#0a0014;
+--card:#16002b;
+--green:#25d366;
+--gold:#facc15;
+--red:#ff3b3b;
+}
 
-.container { max-width:1100px; margin:auto; padding:30px; }
-.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:25px; }
+body{
+font-family:'Montserrat',sans-serif;
+background:linear-gradient(180deg,#0a0014,#140028);
+color:white;
+margin:0;
+}
 
-.card { background:var(--card); border:1px solid #330066; border-radius:15px; overflow:hidden; text-align:center; transition:0.3s; }
-.card:hover { border-color:var(--primary); transform:translateY(-5px); }
-.card img { width:100%; height:320px; object-fit:contain; background:#000; }
+header{
+padding:25px;
+text-align:center;
+border-bottom:2px solid var(--primary);
+}
 
-.info { padding:20px; }
-.preco { color:var(--green); font-size:22px; font-weight:bold; margin:10px 0; }
+.logo{
+font-family:'Orbitron';
+font-size:32px;
+text-shadow:0 0 15px var(--primary);
+}
 
-.btn { background:var(--green); color:white; padding:12px; border-radius:8px; border:none; cursor:pointer; width:100%; font-weight:bold; }
+.container{
+max-width:1200px;
+margin:auto;
+padding:30px;
+}
 
-.carrinho-btn {
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:25px;
+}
+
+.card{
+background:var(--card);
+border-radius:15px;
+overflow:hidden;
+padding-bottom:15px;
+}
+
+.card img{
+width:100%;
+height:280px;
+object-fit:contain;
+background:black;
+}
+
+.info{
+padding:15px;
+text-align:center;
+}
+
+.preco{color:var(--green);font-weight:bold;}
+.estoque{font-size:13px;color:#ccc;margin:5px 0;}
+
+button{
+padding:8px;
+border:none;
+border-radius:6px;
+cursor:pointer;
+font-weight:bold;
+}
+
+.btn{background:var(--primary);color:white;width:100%;}
+.btn:hover{background:#9333ea;}
+
+.admin-btn{
 position:fixed;
-bottom:20px;
+top:20px;
 right:20px;
 background:var(--gold);
 color:black;
-padding:15px;
-border-radius:50px;
-font-weight:bold;
-cursor:pointer;
 }
 
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; }
-.modal-content { background:var(--card); padding:25px; border-radius:15px; width:90%; max-width:450px; max-height:90vh; overflow:auto; }
+.modal{
+display:none;
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:rgba(0,0,0,0.9);
+justify-content:center;
+align-items:center;
+z-index:1000;
+}
 
-input { width:100%; padding:8px; margin:5px 0; }
-.remover { background:red; border:none; color:white; padding:4px 8px; cursor:pointer; }
+.modal-content{
+background:var(--card);
+padding:25px;
+border-radius:15px;
+width:95%;
+max-width:500px;
+max-height:90vh;
+overflow:auto;
+}
+
+input{
+width:100%;
+padding:8px;
+margin:5px 0;
+border-radius:6px;
+border:none;
+}
+
+.close{
+text-align:right;
+cursor:pointer;
+color:var(--red);
+font-weight:bold;
+}
+
+.admin-panel{
+display:none;
+}
 </style>
 </head>
 <body>
@@ -49,165 +135,124 @@ input { width:100%; padding:8px; margin:5px 0; }
 <div class="logo">VORTIX 3D</div>
 </header>
 
+<button class="admin-btn" onclick="abrirLogin()">ADMIN</button>
+
 <div class="container">
-<div class="grid">
-
-<div class="card">
-<img src="./loki.png">
-<div class="info">
-<h3>FUNKO PERSONALIZADO</h3>
-<div class="preco">R$ 180,00</div>
-<button class="btn" onclick="addToCart('Funko Personalizado',180)">Adicionar ao Carrinho</button>
-</div>
+<div class="grid" id="produtos"></div>
 </div>
 
-<div class="card">
-<img src="./black-noir.png">
-<div class="info">
-<h3>BLACK NOIR</h3>
-<div class="preco">R$ 95,00</div>
-<button class="btn" onclick="addToCart('Black Noir',95)">Adicionar ao Carrinho</button>
-</div>
-</div>
-
-<div class="card">
-<img src="./indiana.png">
-<div class="info">
-<h3>INDIANA JONES</h3>
-<div class="preco">R$ 110,00</div>
-<button class="btn" onclick="addToCart('Indiana Jones',110)">Adicionar ao Carrinho</button>
-</div>
-</div>
-
-<div class="card">
-<img src="./jack.png">
-<div class="info">
-<h3>JACK SPARROW</h3>
-<div class="preco">R$ 115,00</div>
-<button class="btn" onclick="addToCart('Jack Sparrow',115)">Adicionar ao Carrinho</button>
-</div>
-</div>
-
-<div class="card">
-<img src="./rick.png">
-<div class="info">
-<h3>RICK GRIMES</h3>
-<div class="preco">R$ 210,00</div>
-<button class="btn" onclick="addToCart('Rick Grimes',210)">Adicionar ao Carrinho</button>
-</div>
-</div>
-
-<div class="card">
-<img src="./yuta.jpg">
-<div class="info">
-<h3>YUTA & RIKA</h3>
-<div class="preco">R$ 320,00</div>
-<button class="btn" onclick="addToCart('Yuta & Rika',320)">Adicionar ao Carrinho</button>
-</div>
-</div>
-
-</div>
-</div>
-
-<div class="carrinho-btn" onclick="abrirCarrinho()">🛒 Carrinho</div>
-
-<div id="modalCarrinho" class="modal">
+<!-- LOGIN ADMIN -->
+<div class="modal" id="loginModal">
 <div class="modal-content">
-<h2>Seu Carrinho</h2>
+<div class="close" onclick="fecharLogin()">X</div>
+<h2>Login Admin</h2>
+<input type="text" id="adminUser" placeholder="Usuário">
+<input type="password" id="adminPass" placeholder="Senha">
+<button class="btn" onclick="login()">Entrar</button>
+</div>
+</div>
 
-<div id="lista"></div>
-<hr>
-
-<input type="text" id="nome" placeholder="Seu nome">
-<input type="text" id="telefone" placeholder="Seu telefone">
-<input type="text" id="cep" placeholder="Seu CEP">
-
-<p>Frete: R$ <span id="frete">0</span></p>
-<h3>Total: R$ <span id="total">0</span></h3>
-
-<button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
-<button style="margin-top:10px;background:none;color:red;border:none;cursor:pointer;" onclick="fecharCarrinho()">FECHAR</button>
+<!-- PAINEL ADMIN -->
+<div class="modal" id="adminModal">
+<div class="modal-content">
+<div class="close" onclick="logout()">SAIR</div>
+<h2>Painel Admin</h2>
+<div id="adminProdutos"></div>
 </div>
 </div>
 
 <script>
-let cart = JSON.parse(localStorage.getItem("cart")) || []
+const ADMIN_USER="VORTIX.3D.ADM.HG"
+const ADMIN_PASS="3D.ADM.VM"
 
-function salvar(){ localStorage.setItem("cart", JSON.stringify(cart)) }
+let produtosPadrao=[
+{nome:"Black Noir",preco:95,estoque:5,img:"black-noir.png"},
+{nome:"Indiana Jones",preco:110,estoque:3,img:"indiana.png"},
+{nome:"Jack Sparrow",preco:115,estoque:4,img:"jack.png"},
+{nome:"Rick Grimes",preco:210,estoque:2,img:"rick.png"},
+{nome:"Yuta & Rika",preco:320,estoque:2,img:"yuta.jpg"}
+]
 
-function addToCart(nome,preco){
-let item = cart.find(p=>p.nome===nome)
-if(item){ item.qtd++ } else{ cart.push({nome,preco,qtd:1}) }
-salvar()
-alert("Adicionado ao carrinho!")
+let produtos=JSON.parse(localStorage.getItem("produtos"))||produtosPadrao
+
+function salvar(){
+localStorage.setItem("produtos",JSON.stringify(produtos))
 }
 
-function remover(nome){
-cart = cart.filter(p=>p.nome!==nome)
-salvar()
-atualizar()
-}
-
-function calcularFrete(cep){
-if(cep.startsWith("13")) return 15
-if(cep.startsWith("01")) return 25
-return 35
-}
-
-function atualizar(){
-let lista = document.getElementById("lista")
-lista.innerHTML=""
-let subtotal=0
-
-cart.forEach(item=>{
-subtotal+=item.preco*item.qtd
-lista.innerHTML+=`
-<p>${item.nome} - ${item.qtd}x
-<button class="remover" onclick="remover('${item.nome}')">X</button>
-</p>`
+function render(){
+let container=document.getElementById("produtos")
+container.innerHTML=""
+produtos.forEach(p=>{
+container.innerHTML+=`
+<div class="card">
+<img src="./${p.img}">
+<div class="info">
+<h3>${p.nome}</h3>
+<div class="preco">R$ ${p.preco}</div>
+<div class="estoque">Estoque: ${p.estoque}</div>
+</div>
+</div>`
 })
-
-let cep=document.getElementById("cep").value
-let frete=cep.length>=8?calcularFrete(cep):0
-
-document.getElementById("frete").innerText=frete.toFixed(2)
-document.getElementById("total").innerText=(subtotal+frete).toFixed(2)
 }
 
-function finalizar(){
-let nome=document.getElementById("nome").value
-let telefone=document.getElementById("telefone").value
-let cep=document.getElementById("cep").value
+function abrirLogin(){document.getElementById("loginModal").style.display="flex"}
+function fecharLogin(){document.getElementById("loginModal").style.display="none"}
 
-if(cart.length==0){ alert("Carrinho vazio"); return }
-if(!nome||!telefone||!cep){ alert("Preencha todos os campos"); return }
+function login(){
+let u=document.getElementById("adminUser").value
+let p=document.getElementById("adminPass").value
 
-let subtotal=0
-let msg="🛒 *Novo Pedido - VORTIX 3D*%0A%0A"
-msg+=`👤 Nome: ${nome}%0A📞 Telefone: ${telefone}%0A📍 CEP: ${cep}%0A%0A`
+if(u===ADMIN_USER && p===ADMIN_PASS){
+fecharLogin()
+abrirAdmin()
+}else{
+alert("Login incorreto")
+}
+}
 
-cart.forEach(item=>{
-let totalItem=item.preco*item.qtd
-subtotal+=totalItem
-msg+=`• ${item.nome}%0AQuantidade: ${item.qtd}%0ASubtotal: R$ ${totalItem.toFixed(2)}%0A%0A`
+function abrirAdmin(){
+document.getElementById("adminModal").style.display="flex"
+renderAdmin()
+}
+
+function logout(){
+document.getElementById("adminModal").style.display="none"
+}
+
+function renderAdmin(){
+let container=document.getElementById("adminProdutos")
+container.innerHTML=""
+produtos.forEach((p,i)=>{
+container.innerHTML+=`
+<hr>
+<h3>${p.nome}</h3>
+Preço: <input type="number" value="${p.preco}" onchange="alterarPreco(${i},this.value)">
+Estoque: <input type="number" value="${p.estoque}" onchange="alterarEstoque(${i},this.value)">
+<button onclick="resetar(${i})">Resetar</button>
+`
 })
-
-let frete=calcularFrete(cep)
-let total=subtotal+frete
-
-msg+=`🚚 Frete: R$ ${frete.toFixed(2)}%0A💰 *Total: R$ ${total.toFixed(2)}*`
-
-window.open(`https://wa.me/5519996804873?text=${msg}`,"_blank")
-
-cart=[]
-salvar()
-atualizar()
 }
 
-function abrirCarrinho(){ document.getElementById("modalCarrinho").style.display="flex"; atualizar() }
-function fecharCarrinho(){ document.getElementById("modalCarrinho").style.display="none" }
+function alterarPreco(i,val){
+produtos[i].preco=Number(val)
+salvar()
+render()
+}
 
-document.getElementById("cep").addEventListener("input", atualizar)
+function alterarEstoque(i,val){
+produtos[i].estoque=Number(val)
+salvar()
+render()
+}
+
+function resetar(i){
+produtos[i]=produtosPadrao[i]
+salvar()
+render()
+renderAdmin()
+}
+
+render()
 </script>
 
 </body>
