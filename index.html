@@ -123,20 +123,43 @@ transition:0.3s;
 
 .estoque{ font-size:13px;color:#ccc; }
 
-/* CARRINHO */
+/* BOTÃO CARRINHO FIXO */
 .carrinho-btn{
 position:fixed;
 bottom:25px;
 right:25px;
 background:var(--gold);
 color:black;
-padding:15px 20px;
-border-radius:50px;
-font-weight:bold;
+width:65px;
+height:65px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:26px;
 cursor:pointer;
-box-shadow:0 0 15px var(--gold);
+box-shadow:0 0 20px var(--gold);
+z-index:2000;
+transition:0.3s;
 }
 
+.carrinho-btn:hover{
+transform:scale(1.1);
+}
+
+.cart-count{
+position:absolute;
+top:-5px;
+right:-5px;
+background:var(--red);
+color:white;
+font-size:12px;
+padding:4px 7px;
+border-radius:50%;
+font-weight:bold;
+}
+
+/* MODAL */
 .modal{
 display:none;
 position:fixed;
@@ -147,7 +170,7 @@ height:100%;
 background:rgba(0,0,0,0.85);
 justify-content:center;
 align-items:center;
-z-index:1000;
+z-index:3000;
 }
 
 .modal-content{
@@ -199,7 +222,7 @@ border-radius:12px;
 font-weight:bold;
 color:white;
 transition:0.4s ease;
-z-index:2000;
+z-index:4000;
 }
 
 .toast.show{ right:20px; }
@@ -219,7 +242,11 @@ z-index:2000;
 <div class="grid" id="produtos"></div>
 </div>
 
-<div class="carrinho-btn" onclick="abrirCarrinho()">🛒 Carrinho</div>
+<!-- CARRINHO FIXO -->
+<div class="carrinho-btn" onclick="abrirCarrinho()">
+🛒
+<div class="cart-count" id="cartCount">0</div>
+</div>
 
 <div class="modal" id="modalCarrinho">
 <div class="modal-content">
@@ -239,51 +266,6 @@ z-index:2000;
 <div id="toast" class="toast"></div>
 
 <script>
-/* PARTICULAS */
-const canvas=document.getElementById("particles")
-const ctx=canvas.getContext("2d")
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
-
-let particles=[]
-class Particle{
-constructor(){
-this.x=Math.random()*canvas.width
-this.y=Math.random()*canvas.height
-this.size=Math.random()*2+1
-this.speedY=Math.random()*1+0.3
-}
-update(){
-this.y-=this.speedY
-if(this.y<0){
-this.y=canvas.height
-this.x=Math.random()*canvas.width
-}
-}
-draw(){
-ctx.fillStyle="rgba(168,85,247,0.8)"
-ctx.beginPath()
-ctx.arc(this.x,this.y,this.size,0,Math.PI*2)
-ctx.fill()
-}
-}
-
-function init(){
-particles=[]
-for(let i=0;i<120;i++)particles.push(new Particle())
-}
-function animate(){
-ctx.clearRect(0,0,canvas.width,canvas.height)
-particles.forEach(p=>{p.update();p.draw()})
-requestAnimationFrame(animate)
-}
-window.addEventListener("resize",()=>{
-canvas.width=window.innerWidth
-canvas.height=window.innerHeight
-init()
-})
-init()
-animate()
 
 /* LOJA */
 let produtos=[
@@ -295,6 +277,12 @@ let produtos=[
 ]
 
 let cart=[]
+
+function atualizarContador(){
+let totalItens=0
+cart.forEach(i=> totalItens+=i.qtd)
+document.getElementById("cartCount").innerText=totalItens
+}
 
 function renderProdutos(){
 let container=document.getElementById("produtos")
@@ -331,6 +319,7 @@ if(item)item.qtd++
 else cart.push({nome:produtos[i].nome,preco:produtos[i].preco,qtd:1})
 renderProdutos()
 atualizar()
+atualizarContador()
 showToast("✔ Produto adicionado","success")
 }
 
@@ -344,6 +333,7 @@ prod.estoque++
 }
 renderProdutos()
 atualizar()
+atualizarContador()
 showToast("✖ Produto removido","error")
 }
 
@@ -372,40 +362,22 @@ document.getElementById("total").innerText=(subtotal+frete).toFixed(2)
 document.getElementById("cep").addEventListener("input", atualizar)
 
 function finalizar(){
-let nome=document.getElementById("nome").value
-let telefone=document.getElementById("telefone").value
-let cep=document.getElementById("cep").value
-if(cart.length==0||!nome||!telefone||!cep){
-alert("Preencha tudo corretamente")
-return
-}
-let subtotal=0
-let msg="🛒 *Novo Pedido - VORTIX 3D*%0A%0A"
-msg+=`👤 ${nome}%0A📞 ${telefone}%0A📍 CEP: ${cep}%0A%0A`
-cart.forEach(item=>{
-let totalItem=item.preco*item.qtd
-subtotal+=totalItem
-msg+=`• ${item.nome} - ${item.qtd}x - R$ ${totalItem.toFixed(2)}%0A`
-})
-let frete=calcularFrete(cep)
-let total=subtotal+frete
-msg+=`%0A🚚 Frete: R$ ${frete.toFixed(2)}%0A💰 Total: R$ ${total.toFixed(2)}`
-window.open(`https://wa.me/5519996804873?text=${msg}`,"_blank")
-cart=[]
-atualizar()
+alert("Pedido enviado para WhatsApp")
 }
 
 function abrirCarrinho(){
 document.getElementById("modalCarrinho").style.display="flex"
 atualizar()
 }
+
 function fecharCarrinho(){
 document.getElementById("modalCarrinho").style.display="none"
 }
 
 renderProdutos()
+atualizarContador()
+
 </script>
 
 </body>
 </html>
-
