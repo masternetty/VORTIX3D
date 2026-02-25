@@ -1,88 +1,214 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <title>VORTIX 3D | Oficial</title>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #a855f7; --bg: #0d001a; --card: #1a0033; --green: #25d366; --gold: #facc15; }
-        body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: white; margin: 0; padding: 0; }
-        header { background: var(--card); padding: 30px; text-align: center; border-bottom: 3px solid var(--primary); }
-        .logo { font-family: 'Orbitron', sans-serif; font-size: 35px; color: white; text-shadow: 0 0 15px var(--primary); }
-        .container { max-width: 1100px; margin: auto; padding: 30px; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
-        .card { background: var(--card); border: 1px solid #330066; border-radius: 15px; overflow: hidden; text-align: center; transition: 0.3s; }
-        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
-        
-        /* Ajuste para as imagens aparecerem */
-        .card img { width: 100%; height: 320px; object-fit: contain; background: #000; display: block; margin: 0 auto; }
-        
-        .info { padding: 20px; }
-        .preco { color: var(--green); font-size: 22px; font-weight: bold; margin: 10px 0; }
-        .btn { display: block; background: var(--green); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px; border: none; cursor: pointer; width: 100%; text-align: center; }
-        
-        /* Modal */
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
-        .modal-content { background: var(--card); padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 90%; max-width: 400px; text-align: center; }
-    </style>
+<meta charset="UTF-8">
+<title>VORTIX 3D | Oficial</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+:root { --primary:#a855f7; --bg:#0d001a; --card:#1a0033; --green:#25d366; --gold:#facc15; }
+body { font-family:'Montserrat',sans-serif; background:var(--bg); color:white; margin:0; }
+header { background:var(--card); padding:30px; text-align:center; border-bottom:3px solid var(--primary); }
+.logo { font-family:'Orbitron'; font-size:35px; text-shadow:0 0 15px var(--primary); }
+
+.container { max-width:1100px; margin:auto; padding:30px; }
+.grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:25px; }
+
+.card { background:var(--card); border:1px solid #330066; border-radius:15px; overflow:hidden; text-align:center; transition:0.3s; }
+.card:hover { border-color:var(--primary); transform:translateY(-5px); }
+.card img { width:100%; height:320px; object-fit:contain; background:#000; }
+
+.info { padding:20px; }
+.preco { color:var(--green); font-size:22px; font-weight:bold; margin:10px 0; }
+
+.btn { background:var(--green); color:white; padding:12px; border-radius:8px; border:none; cursor:pointer; width:100%; font-weight:bold; }
+
+.carrinho-btn {
+position:fixed;
+bottom:20px;
+right:20px;
+background:var(--gold);
+color:black;
+padding:15px;
+border-radius:50px;
+font-weight:bold;
+cursor:pointer;
+}
+
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:1000; justify-content:center; align-items:center; }
+.modal-content { background:var(--card); padding:25px; border-radius:15px; width:90%; max-width:450px; max-height:90vh; overflow:auto; }
+
+input { width:100%; padding:8px; margin:5px 0; }
+.remover { background:red; border:none; color:white; padding:4px 8px; cursor:pointer; }
+</style>
 </head>
 <body>
 
 <header>
-    <div class="logo">VORTIX 3D</div>
+<div class="logo">VORTIX 3D</div>
 </header>
 
 <div class="container">
-    <div class="grid">
-        <div class="card" style="border: 2px solid var(--gold);">
-            <img src="./loki.png">
-            <div class="info">
-                <h3>FUNKO PERSONALIZADO</h3>
-                <button class="btn" style="background: var(--gold); color: black;" onclick="abrir()">VER COMO FICARIA</button>
-                <div class="preco">R$ 180,00</div>
-                <a href="https://wa.me/5519996804873" class="btn">PEDIR AGORA</a>
-            </div>
-        </div>
+<div class="grid">
 
-        <div class="card">
-            <img src="./black-noir.png">
-            <div class="info"><h3>BLACK NOIR</h3><div class="preco">R$ 95,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
-        </div>
-
-        <div class="card">
-            <img src="./indiana.png">
-            <div class="info"><h3>INDIANA JONES</h3><div class="preco">R$ 110,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
-        </div>
-
-        <div class="card">
-            <img src="./jack.png">
-            <div class="info"><h3>JACK SPARROW</h3><div class="preco">R$ 115,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
-        </div>
-
-        <div class="card">
-            <img src="./rick.png">
-            <div class="info"><h3>RICK GRIMES</h3><div class="preco">R$ 210,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
-        </div>
-
-        <div class="card">
-            <img src="./yuta.jpg">
-            <div class="info"><h3>YUTA & RIKA</h3><div class="preco">R$ 320,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
-        </div>
-    </div>
+<div class="card">
+<img src="./loki.png">
+<div class="info">
+<h3>FUNKO PERSONALIZADO</h3>
+<div class="preco">R$ 180,00</div>
+<button class="btn" onclick="addToCart('Funko Personalizado',180)">Adicionar ao Carrinho</button>
+</div>
 </div>
 
-<div id="janela" class="modal">
-    <div class="modal-content">
-        <h2 style="font-size: 18px;">QUER UMA PRÉVIA?</h2>
-        <p style="font-size: 13px; margin: 15px 0;">Envie sua foto para um de nossos atendentes! Eles criarão uma prévia exclusiva do seu Funko para você ver como ficaria.</p>
-        <a href="https://wa.me/5519996804873?text=Olá! Quero enviar uma foto para ver como ficaria meu Funko personalizado." class="btn">FALAR COM ATENDENTE</a>
-        <button onclick="fechar()" style="margin-top:15px; background:none; color:red; border:none; cursor:pointer; font-weight:bold;">[ FECHAR ]</button>
-    </div>
+<div class="card">
+<img src="./black-noir.png">
+<div class="info">
+<h3>BLACK NOIR</h3>
+<div class="preco">R$ 95,00</div>
+<button class="btn" onclick="addToCart('Black Noir',95)">Adicionar ao Carrinho</button>
+</div>
+</div>
+
+<div class="card">
+<img src="./indiana.png">
+<div class="info">
+<h3>INDIANA JONES</h3>
+<div class="preco">R$ 110,00</div>
+<button class="btn" onclick="addToCart('Indiana Jones',110)">Adicionar ao Carrinho</button>
+</div>
+</div>
+
+<div class="card">
+<img src="./jack.png">
+<div class="info">
+<h3>JACK SPARROW</h3>
+<div class="preco">R$ 115,00</div>
+<button class="btn" onclick="addToCart('Jack Sparrow',115)">Adicionar ao Carrinho</button>
+</div>
+</div>
+
+<div class="card">
+<img src="./rick.png">
+<div class="info">
+<h3>RICK GRIMES</h3>
+<div class="preco">R$ 210,00</div>
+<button class="btn" onclick="addToCart('Rick Grimes',210)">Adicionar ao Carrinho</button>
+</div>
+</div>
+
+<div class="card">
+<img src="./yuta.jpg">
+<div class="info">
+<h3>YUTA & RIKA</h3>
+<div class="preco">R$ 320,00</div>
+<button class="btn" onclick="addToCart('Yuta & Rika',320)">Adicionar ao Carrinho</button>
+</div>
+</div>
+
+</div>
+</div>
+
+<div class="carrinho-btn" onclick="abrirCarrinho()">🛒 Carrinho</div>
+
+<div id="modalCarrinho" class="modal">
+<div class="modal-content">
+<h2>Seu Carrinho</h2>
+
+<div id="lista"></div>
+<hr>
+
+<input type="text" id="nome" placeholder="Seu nome">
+<input type="text" id="telefone" placeholder="Seu telefone">
+<input type="text" id="cep" placeholder="Seu CEP">
+
+<p>Frete: R$ <span id="frete">0</span></p>
+<h3>Total: R$ <span id="total">0</span></h3>
+
+<button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
+<button style="margin-top:10px;background:none;color:red;border:none;cursor:pointer;" onclick="fecharCarrinho()">FECHAR</button>
+</div>
 </div>
 
 <script>
-    function abrir() { document.getElementById('janela').style.display = 'flex'; }
-    function fechar() { document.getElementById('janela').style.display = 'none'; }
+let cart = JSON.parse(localStorage.getItem("cart")) || []
+
+function salvar(){ localStorage.setItem("cart", JSON.stringify(cart)) }
+
+function addToCart(nome,preco){
+let item = cart.find(p=>p.nome===nome)
+if(item){ item.qtd++ } else{ cart.push({nome,preco,qtd:1}) }
+salvar()
+alert("Adicionado ao carrinho!")
+}
+
+function remover(nome){
+cart = cart.filter(p=>p.nome!==nome)
+salvar()
+atualizar()
+}
+
+function calcularFrete(cep){
+if(cep.startsWith("13")) return 15
+if(cep.startsWith("01")) return 25
+return 35
+}
+
+function atualizar(){
+let lista = document.getElementById("lista")
+lista.innerHTML=""
+let subtotal=0
+
+cart.forEach(item=>{
+subtotal+=item.preco*item.qtd
+lista.innerHTML+=`
+<p>${item.nome} - ${item.qtd}x
+<button class="remover" onclick="remover('${item.nome}')">X</button>
+</p>`
+})
+
+let cep=document.getElementById("cep").value
+let frete=cep.length>=8?calcularFrete(cep):0
+
+document.getElementById("frete").innerText=frete.toFixed(2)
+document.getElementById("total").innerText=(subtotal+frete).toFixed(2)
+}
+
+function finalizar(){
+let nome=document.getElementById("nome").value
+let telefone=document.getElementById("telefone").value
+let cep=document.getElementById("cep").value
+
+if(cart.length==0){ alert("Carrinho vazio"); return }
+if(!nome||!telefone||!cep){ alert("Preencha todos os campos"); return }
+
+let subtotal=0
+let msg="🛒 *Novo Pedido - VORTIX 3D*%0A%0A"
+msg+=`👤 Nome: ${nome}%0A📞 Telefone: ${telefone}%0A📍 CEP: ${cep}%0A%0A`
+
+cart.forEach(item=>{
+let totalItem=item.preco*item.qtd
+subtotal+=totalItem
+msg+=`• ${item.nome}%0AQuantidade: ${item.qtd}%0ASubtotal: R$ ${totalItem.toFixed(2)}%0A%0A`
+})
+
+let frete=calcularFrete(cep)
+let total=subtotal+frete
+
+msg+=`🚚 Frete: R$ ${frete.toFixed(2)}%0A💰 *Total: R$ ${total.toFixed(2)}*`
+
+window.open(`https://wa.me/5519996804873?text=${msg}`,"_blank")
+
+cart=[]
+salvar()
+atualizar()
+}
+
+function abrirCarrinho(){ document.getElementById("modalCarrinho").style.display="flex"; atualizar() }
+function fecharCarrinho(){ document.getElementById("modalCarrinho").style.display="none" }
+
+document.getElementById("cep").addEventListener("input", atualizar)
 </script>
+
 </body>
 </html>
