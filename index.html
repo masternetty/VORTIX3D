@@ -259,7 +259,6 @@ if(item){item.qtd++}
 else{cart.push({nome:estoque[i].nome,preco:estoque[i].preco,qtd:1})}
 salvar()
 renderProdutos()
-alert("Adicionado!")
 }
 
 function remover(nome){
@@ -317,27 +316,39 @@ function finalizar(){
 let nome=document.getElementById("nome").value
 let telefone=document.getElementById("telefone").value
 let cep=document.getElementById("cep").value
+
 if(cart.length==0||!nome||!telefone||cep.replace(/\D/g,'').length!==8){
 alert("Preencha tudo corretamente")
 return
 }
 
 let subtotal=0
-let msg="🛒 *Novo Pedido - VORTIX 3D*%0A%0A"
-msg+=`👤 ${nome}%0A📞 ${telefone}%0A📍 CEP: ${cep}%0A%0A`
+let mensagem = `🛒 *Novo Pedido - VORTIX 3D*
+
+👤 ${nome}
+📞 ${telefone}
+📍 CEP: ${cep}
+
+`
 
 cart.forEach(item=>{
 let totalItem=item.preco*item.qtd
 subtotal+=totalItem
-msg+=`• ${item.nome} - ${item.qtd}x - R$ ${totalItem.toFixed(2)}%0A`
+mensagem += `• ${item.nome} - ${item.qtd}x - R$ ${totalItem.toFixed(2)}
+`
 })
 
 let frete=calcularFrete(cep)
 let total=subtotal+frete
 
-msg+=`%0A🚚 Frete: R$ ${frete.toFixed(2)}%0A💰 Total: R$ ${total.toFixed(2)}`
+mensagem += `
+🚚 Frete: R$ ${frete.toFixed(2)}
+💰 Total: R$ ${total.toFixed(2)}
+`
 
-window.open(`https://wa.me/5519996804873?text=${msg}`,"_blank")
+let msgFormatada = encodeURIComponent(mensagem)
+
+window.open(`https://wa.me/5519996804873?text=${msgFormatada}`,"_blank")
 
 cart=[]
 salvar()
