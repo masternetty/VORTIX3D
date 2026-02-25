@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>VORTIX 3D | Premium</title>
+<title>VORTIX 3D | Ultra Premium</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
@@ -24,14 +24,24 @@ color:white;
 overflow-x:hidden;
 background:linear-gradient(-45deg,#0f001f,#1a0033,#0a0014,#140028);
 background-size:400% 400%;
-animation:gradientBG 12s ease infinite;
+animation:gradientBG 15s ease infinite;
 }
 
-/* ANIMAÇÃO DO FUNDO */
+/* FUNDO ANIMADO */
 @keyframes gradientBG{
 0%{background-position:0% 50%}
 50%{background-position:100% 50%}
 100%{background-position:0% 50%}
+}
+
+/* CANVAS PARTICULAS */
+#particles{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
 }
 
 /* HEADER */
@@ -113,82 +123,9 @@ font-weight:bold;
 transition:0.3s;
 }
 
-.btn:hover{
-transform:scale(1.05);
-}
+.btn:hover{ transform:scale(1.05); }
 
-.estoque{
-font-size:13px;
-color:#ccc;
-}
-
-/* CARRINHO */
-.carrinho-btn{
-position:fixed;
-bottom:25px;
-right:25px;
-background:linear-gradient(90deg,#facc15,#fde047);
-color:black;
-padding:15px 22px;
-border-radius:50px;
-font-weight:bold;
-cursor:pointer;
-box-shadow:0 0 25px var(--gold);
-}
-
-/* MODAL */
-.modal{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.85);
-justify-content:center;
-align-items:center;
-z-index:1000;
-}
-
-.modal-content{
-background:rgba(20,0,40,0.95);
-border:1px solid rgba(168,85,247,0.4);
-width:95%;
-max-width:500px;
-border-radius:20px;
-padding:25px;
-position:relative;
-max-height:90vh;
-overflow:auto;
-}
-
-.close{
-position:absolute;
-top:10px;
-right:15px;
-font-size:22px;
-cursor:pointer;
-color:var(--red);
-}
-
-input{
-width:100%;
-padding:10px;
-margin:6px 0;
-border-radius:8px;
-border:none;
-background:rgba(255,255,255,0.1);
-color:white;
-}
-
-.remover{
-background:var(--red);
-border:none;
-color:white;
-padding:4px 8px;
-cursor:pointer;
-margin-left:10px;
-}
+.estoque{ font-size:13px;color:#ccc; }
 
 /* TOAST */
 .toast{
@@ -200,7 +137,6 @@ border-radius:12px;
 font-weight:bold;
 color:white;
 transition:0.4s ease;
-box-shadow:0 0 20px rgba(0,0,0,0.4);
 z-index:2000;
 }
 
@@ -211,6 +147,8 @@ z-index:2000;
 </head>
 <body>
 
+<canvas id="particles"></canvas>
+
 <header>
 <div class="logo">VORTIX 3D</div>
 </header>
@@ -219,26 +157,67 @@ z-index:2000;
 <div class="grid" id="produtos"></div>
 </div>
 
-<div class="carrinho-btn" onclick="abrirCarrinho()">🛒 Carrinho</div>
-
-<div class="modal" id="modalCarrinho">
-<div class="modal-content">
-<div class="close" onclick="fecharCarrinho()">✖</div>
-<h2>Seu Carrinho</h2>
-<div id="lista"></div>
-<hr>
-<input type="text" id="nome" placeholder="Seu nome">
-<input type="text" id="telefone" placeholder="Seu telefone">
-<input type="text" id="cep" placeholder="Seu CEP">
-<p>Frete: R$ <span id="frete">0.00</span></p>
-<h3>Total: R$ <span id="total">0.00</span></h3>
-<button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
-</div>
-</div>
-
 <div id="toast" class="toast"></div>
 
 <script>
+/* ================= PARTICULAS ================= */
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let particlesArray = [];
+
+class Particle{
+constructor(){
+this.x = Math.random()*canvas.width;
+this.y = Math.random()*canvas.height;
+this.size = Math.random()*2+1;
+this.speedY = Math.random()*1+0.3;
+}
+update(){
+this.y -= this.speedY;
+if(this.y < 0){
+this.y = canvas.height;
+this.x = Math.random()*canvas.width;
+}
+}
+draw(){
+ctx.fillStyle="rgba(168,85,247,0.8)";
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+ctx.fill();
+}
+}
+
+function initParticles(){
+particlesArray=[];
+for(let i=0;i<120;i++){
+particlesArray.push(new Particle());
+}
+}
+
+function animateParticles(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particlesArray.forEach(p=>{
+p.update();
+p.draw();
+});
+requestAnimationFrame(animateParticles);
+}
+
+window.addEventListener("resize",()=>{
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+initParticles();
+});
+
+initParticles();
+animateParticles();
+
+/* ================= LOJA ================= */
+
 let produtos=[
 {nome:"Black Noir",preco:95,estoque:5,img:"black-noir.png"},
 {nome:"Indiana Jones",preco:110,estoque:3,img:"indiana.png"},
@@ -246,8 +225,6 @@ let produtos=[
 {nome:"Rick Grimes",preco:210,estoque:2,img:"rick.png"},
 {nome:"Yuta & Rika",preco:320,estoque:2,img:"yuta.jpg"}
 ]
-
-let cart=[]
 
 function renderProdutos(){
 let container=document.getElementById("produtos")
@@ -260,9 +237,7 @@ container.innerHTML+=`
 <h3>${p.nome}</h3>
 <div class="preco">R$ ${p.preco}</div>
 <div class="estoque">Estoque: ${p.estoque}</div>
-<button class="btn" onclick="addToCart(${i})" ${p.estoque<=0?"disabled":""}>
-${p.estoque<=0?"ESGOTADO":"Adicionar ao Carrinho"}
-</button>
+<button class="btn" onclick="addToCart(${i})">Adicionar ao Carrinho</button>
 </div>
 </div>`
 })
@@ -270,66 +245,18 @@ ${p.estoque<=0?"ESGOTADO":"Adicionar ao Carrinho"}
 
 function showToast(msg,type){
 let toast=document.getElementById("toast")
-toast.className="toast "+(type==="success"?"success":"error")
+toast.className="toast "+type
 toast.innerText=msg
 toast.classList.add("show")
-setTimeout(()=>{toast.classList.remove("show")},2500)
+setTimeout(()=>toast.classList.remove("show"),2500)
 }
 
 function addToCart(i){
-if(produtos[i].estoque<=0)return
-produtos[i].estoque--
-let item=cart.find(c=>c.nome===produtos[i].nome)
-if(item){item.qtd++}
-else{cart.push({nome:produtos[i].nome,preco:produtos[i].preco,qtd:1})}
-renderProdutos()
 showToast("✔ Produto adicionado","success")
 }
 
-function remover(nome){
-let item=cart.find(c=>c.nome===nome)
-if(item){
-item.qtd--
-if(item.qtd<=0) cart=cart.filter(c=>c.nome!==nome)
-let prod=produtos.find(p=>p.nome===nome)
-prod.estoque++
-}
-atualizar()
-renderProdutos()
-showToast("✖ Produto removido","error")
-}
-
-function calcularFrete(cep){
-cep=cep.replace(/\D/g,'')
-if(cep.startsWith("13")) return 15
-if(cep.startsWith("01")) return 25
-return 35
-}
-
-function atualizar(){
-let lista=document.getElementById("lista")
-lista.innerHTML=""
-let subtotal=0
-cart.forEach(item=>{
-subtotal+=item.preco*item.qtd
-lista.innerHTML+=`${item.nome} - ${item.qtd}x 
-<button class="remover" onclick="remover('${item.nome}')">X</button><br>`
-})
-let cep=document.getElementById("cep").value.replace(/\D/g,'')
-let frete=cep.length===8?calcularFrete(cep):0
-document.getElementById("frete").innerText=frete.toFixed(2)
-document.getElementById("total").innerText=(subtotal+frete).toFixed(2)
-}
-
-function finalizar(){
-if(cart.length==0){showToast("Carrinho vazio","error");return}
-showToast("Pedido enviado","success")
-}
-
-function abrirCarrinho(){document.getElementById("modalCarrinho").style.display="flex"; atualizar()}
-function fecharCarrinho(){document.getElementById("modalCarrinho").style.display="none"}
-
-renderProdutos()
+renderProdutos();
 </script>
+
 </body>
 </html>
