@@ -9,7 +9,6 @@
 <style>
 :root{
 --primary:#a855f7;
---bg:#0a0014;
 --card:#16002b;
 --green:#25d366;
 --gold:#facc15;
@@ -114,18 +113,6 @@ cursor:pointer;
 box-shadow:0 0 15px var(--gold);
 }
 
-.admin-btn{
-position:fixed;
-top:20px;
-left:20px;
-background:var(--gold);
-color:black;
-padding:10px 15px;
-border-radius:8px;
-cursor:pointer;
-font-weight:bold;
-}
-
 .modal{
 display:none;
 position:fixed;
@@ -176,6 +163,24 @@ padding:4px 8px;
 cursor:pointer;
 margin-left:10px;
 }
+
+/* TOAST */
+.toast{
+position:fixed;
+top:20px;
+right:-400px;
+padding:15px 25px;
+border-radius:12px;
+font-weight:bold;
+color:white;
+transition:0.4s ease;
+box-shadow:0 0 20px rgba(0,0,0,0.4);
+z-index:2000;
+}
+
+.toast.show{ right:20px; }
+.toast.success{ background:var(--green); }
+.toast.error{ background:var(--red); }
 </style>
 </head>
 <body>
@@ -184,39 +189,32 @@ margin-left:10px;
 <div class="logo">VORTIX 3D</div>
 </header>
 
-<button class="admin-btn" onclick="abrirLogin()">ADMIN</button>
-
 <div class="container">
 <div class="grid" id="produtos"></div>
 </div>
 
 <div class="carrinho-btn" onclick="abrirCarrinho()">🛒 Carrinho</div>
 
-<!-- CARRINHO -->
 <div class="modal" id="modalCarrinho">
 <div class="modal-content">
 <div class="close" onclick="fecharCarrinho()">✖</div>
 <h2>Seu Carrinho</h2>
-
 <div id="lista"></div>
 <hr>
-
 <input type="text" id="nome" placeholder="Seu nome">
 <input type="text" id="telefone" placeholder="Seu telefone">
 <input type="text" id="cep" placeholder="Seu CEP" maxlength="9">
-
 <p>Frete: R$ <span id="frete">0.00</span></p>
 <h3>Total: R$ <span id="total">0.00</span></h3>
-
 <button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
 </div>
 </div>
 
-<script>
-const ADMIN_USER="VORTIX.3D.ADM.HG"
-const ADMIN_PASS="3D.ADM.VM"
+<div id="toast" class="toast"></div>
 
-let produtosPadrao=[
+<script>
+
+let produtos=[
 {nome:"Black Noir",preco:95,estoque:5,img:"black-noir.png"},
 {nome:"Indiana Jones",preco:110,estoque:3,img:"indiana.png"},
 {nome:"Jack Sparrow",preco:115,estoque:4,img:"jack.png"},
@@ -224,18 +222,12 @@ let produtosPadrao=[
 {nome:"Yuta & Rika",preco:320,estoque:2,img:"yuta.jpg"}
 ]
 
-let estoque = JSON.parse(localStorage.getItem("estoque"))||produtosPadrao
-let cart = JSON.parse(localStorage.getItem("cart"))||[]
-
-function salvar(){
-localStorage.setItem("estoque",JSON.stringify(estoque))
-localStorage.setItem("cart",JSON.stringify(cart))
-}
+let cart=[]
 
 function renderProdutos(){
 let container=document.getElementById("produtos")
 container.innerHTML=""
-estoque.forEach((p,i)=>{
+produtos.forEach((p,i)=>{
 container.innerHTML+=`
 <div class="card">
 <img src="./${p.img}">
@@ -251,14 +243,22 @@ ${p.estoque<=0?"ESGOTADO":"Adicionar ao Carrinho"}
 })
 }
 
+function showToast(msg,type){
+let toast=document.getElementById("toast")
+toast.className="toast "+(type==="success"?"success":"error")
+toast.innerText=msg
+toast.classList.add("show")
+setTimeout(()=>{toast.classList.remove("show")},2500)
+}
+
 function addToCart(i){
-if(estoque[i].estoque<=0)return
-estoque[i].estoque--
-let item=cart.find(c=>c.nome===estoque[i].nome)
+if(produtos[i].estoque<=0)return
+produtos[i].estoque--
+let item=cart.find(c=>c.nome===produtos[i].nome)
 if(item){item.qtd++}
-else{cart.push({nome:estoque[i].nome,preco:estoque[i].preco,qtd:1})}
-salvar()
+else{cart.push({nome:produtos[i].nome,preco:produtos[i].preco,qtd:1})}
 renderProdutos()
+showToast("✔ Produto adicionado ao carrinho","success")
 }
 
 function remover(nome){
@@ -266,12 +266,12 @@ let item=cart.find(c=>c.nome===nome)
 if(item){
 item.qtd--
 if(item.qtd<=0) cart=cart.filter(c=>c.nome!==nome)
-let prod=estoque.find(p=>p.nome===nome)
+let prod=produtos.find(p=>p.nome===nome)
 prod.estoque++
 }
-salvar()
 atualizar()
 renderProdutos()
+showToast("✖ Produto removido do carrinho","error")
 }
 
 function calcularFrete(cep){
@@ -285,16 +285,13 @@ function atualizar(){
 let lista=document.getElementById("lista")
 lista.innerHTML=""
 let subtotal=0
-
 cart.forEach(item=>{
 subtotal+=item.preco*item.qtd
 lista.innerHTML+=`${item.nome} - ${item.qtd}x 
 <button class="remover" onclick="remover('${item.nome}')">X</button><br>`
 })
-
 let cep=document.getElementById("cep").value.replace(/\D/g,'')
 let frete=cep.length===8?calcularFrete(cep):0
-
 document.getElementById("frete").innerText=frete.toFixed(2)
 document.getElementById("total").innerText=(subtotal+frete).toFixed(2)
 }
@@ -318,12 +315,12 @@ let telefone=document.getElementById("telefone").value
 let cep=document.getElementById("cep").value
 
 if(cart.length==0||!nome||!telefone||cep.replace(/\D/g,'').length!==8){
-alert("Preencha tudo corretamente")
+showToast("Preencha todos os dados corretamente","error")
 return
 }
 
 let subtotal=0
-let mensagem = `🛒 *Novo Pedido - VORTIX 3D*
+let mensagem=`🛒 *Novo Pedido - VORTIX 3D*
 
 👤 ${nome}
 📞 ${telefone}
@@ -334,32 +331,30 @@ let mensagem = `🛒 *Novo Pedido - VORTIX 3D*
 cart.forEach(item=>{
 let totalItem=item.preco*item.qtd
 subtotal+=totalItem
-mensagem += `• ${item.nome} - ${item.qtd}x - R$ ${totalItem.toFixed(2)}
+mensagem+=`• ${item.nome} - ${item.qtd}x - R$ ${totalItem.toFixed(2)}
 `
 })
 
 let frete=calcularFrete(cep)
 let total=subtotal+frete
 
-mensagem += `
+mensagem+=`
 🚚 Frete: R$ ${frete.toFixed(2)}
 💰 Total: R$ ${total.toFixed(2)}
 `
 
-let msgFormatada = encodeURIComponent(mensagem)
-
-window.open(`https://wa.me/5519996804873?text=${msgFormatada}`,"_blank")
+window.open(`https://wa.me/5519996804873?text=${encodeURIComponent(mensagem)}`,"_blank")
 
 cart=[]
-salvar()
 atualizar()
+showToast("Pedido enviado para o WhatsApp","success")
 }
 
 function abrirCarrinho(){document.getElementById("modalCarrinho").style.display="flex"; atualizar()}
 function fecharCarrinho(){document.getElementById("modalCarrinho").style.display="none"}
 
 renderProdutos()
-</script>
 
+</script>
 </body>
 </html>
