@@ -80,6 +80,18 @@ font-weight:bold;
 .btn{background:var(--primary);color:white;width:100%;}
 .btn:hover{background:#9333ea;}
 
+.carrinho-btn{
+position:fixed;
+bottom:20px;
+right:20px;
+background:var(--gold);
+color:black;
+padding:12px 18px;
+border-radius:40px;
+cursor:pointer;
+font-weight:bold;
+}
+
 .admin-btn{
 position:fixed;
 top:20px;
@@ -107,6 +119,17 @@ width:95%;
 max-width:500px;
 max-height:90vh;
 overflow:auto;
+position:relative;
+}
+
+.close{
+position:absolute;
+top:10px;
+right:15px;
+cursor:pointer;
+color:var(--red);
+font-weight:bold;
+font-size:18px;
 }
 
 input{
@@ -117,15 +140,11 @@ border-radius:6px;
 border:none;
 }
 
-.close{
-text-align:right;
-cursor:pointer;
-color:var(--red);
-font-weight:bold;
-}
-
-.admin-panel{
-display:none;
+.remover{
+background:red;
+color:white;
+padding:4px 8px;
+margin-left:10px;
 }
 </style>
 </head>
@@ -136,12 +155,27 @@ display:none;
 </header>
 
 <button class="admin-btn" onclick="abrirLogin()">ADMIN</button>
+<div class="carrinho-btn" onclick="abrirCarrinho()">🛒 Carrinho</div>
 
 <div class="container">
 <div class="grid" id="produtos"></div>
 </div>
 
-<!-- LOGIN ADMIN -->
+<!-- CARRINHO -->
+<div class="modal" id="carrinhoModal">
+<div class="modal-content">
+<div class="close" onclick="fecharCarrinho()">X</div>
+<h2>Seu Carrinho</h2>
+<div id="lista"></div>
+<hr>
+<input type="text" id="nome" placeholder="Seu nome">
+<input type="text" id="telefone" placeholder="Seu telefone">
+<h3>Total: R$ <span id="total">0</span></h3>
+<button class="btn" onclick="finalizar()">Finalizar Pedido</button>
+</div>
+</div>
+
+<!-- LOGIN -->
 <div class="modal" id="loginModal">
 <div class="modal-content">
 <div class="close" onclick="fecharLogin()">X</div>
@@ -152,7 +186,7 @@ display:none;
 </div>
 </div>
 
-<!-- PAINEL ADMIN -->
+<!-- ADMIN -->
 <div class="modal" id="adminModal">
 <div class="modal-content">
 <div class="close" onclick="logout()">SAIR</div>
@@ -174,15 +208,14 @@ let produtosPadrao=[
 ]
 
 let produtos=JSON.parse(localStorage.getItem("produtos"))||produtosPadrao
+let cart=[]
 
-function salvar(){
-localStorage.setItem("produtos",JSON.stringify(produtos))
-}
+function salvar(){localStorage.setItem("produtos",JSON.stringify(produtos))}
 
 function render(){
 let container=document.getElementById("produtos")
 container.innerHTML=""
-produtos.forEach(p=>{
+produtos.forEach((p,i)=>{
 container.innerHTML+=`
 <div class="card">
 <img src="./${p.img}">
@@ -190,9 +223,60 @@ container.innerHTML+=`
 <h3>${p.nome}</h3>
 <div class="preco">R$ ${p.preco}</div>
 <div class="estoque">Estoque: ${p.estoque}</div>
+<button class="btn" onclick="addToCart(${i})" ${p.estoque<=0?"disabled":""}>
+${p.estoque<=0?"ESGOTADO":"Adicionar ao Carrinho"}
+</button>
 </div>
 </div>`
 })
+}
+
+function addToCart(i){
+if(produtos[i].estoque<=0)return
+produtos[i].estoque--
+let item=cart.find(c=>c.nome===produtos[i].nome)
+if(item){item.qtd++}
+else{cart.push({nome:produtos[i].nome,preco:produtos[i].preco,qtd:1})}
+salvar()
+render()
+alert("Adicionado!")
+}
+
+function abrirCarrinho(){document.getElementById("carrinhoModal").style.display="flex"; atualizar()}
+function fecharCarrinho(){document.getElementById("carrinhoModal").style.display="none"}
+
+function atualizar(){
+let lista=document.getElementById("lista")
+lista.innerHTML=""
+let total=0
+cart.forEach(item=>{
+total+=item.preco*item.qtd
+lista.innerHTML+=`${item.nome} - ${item.qtd}x 
+<button class="remover" onclick="remover('${item.nome}')">X</button><br>`
+})
+document.getElementById("total").innerText=total.toFixed(2)
+}
+
+function remover(nome){
+let item=cart.find(c=>c.nome===nome)
+if(item){
+item.qtd--
+if(item.qtd<=0) cart=cart.filter(c=>c.nome!==nome)
+let prod=produtos.find(p=>p.nome===nome)
+prod.estoque++
+}
+salvar()
+render()
+atualizar()
+}
+
+function finalizar(){
+if(cart.length==0){alert("Carrinho vazio");return}
+alert("Pedido enviado para WhatsApp (simulação)")
+cart=[]
+render()
+atualizar()
+fecharCarrinho()
 }
 
 function abrirLogin(){document.getElementById("loginModal").style.display="flex"}
@@ -201,13 +285,10 @@ function fecharLogin(){document.getElementById("loginModal").style.display="none
 function login(){
 let u=document.getElementById("adminUser").value
 let p=document.getElementById("adminPass").value
-
-if(u===ADMIN_USER && p===ADMIN_PASS){
+if(u===ADMIN_USER&&p===ADMIN_PASS){
 fecharLogin()
 abrirAdmin()
-}else{
-alert("Login incorreto")
-}
+}else{alert("Login incorreto")}
 }
 
 function abrirAdmin(){
@@ -215,9 +296,7 @@ document.getElementById("adminModal").style.display="flex"
 renderAdmin()
 }
 
-function logout(){
-document.getElementById("adminModal").style.display="none"
-}
+function logout(){document.getElementById("adminModal").style.display="none"}
 
 function renderAdmin(){
 let container=document.getElementById("adminProdutos")
@@ -226,30 +305,10 @@ produtos.forEach((p,i)=>{
 container.innerHTML+=`
 <hr>
 <h3>${p.nome}</h3>
-Preço: <input type="number" value="${p.preco}" onchange="alterarPreco(${i},this.value)">
-Estoque: <input type="number" value="${p.estoque}" onchange="alterarEstoque(${i},this.value)">
-<button onclick="resetar(${i})">Resetar</button>
+Preço: <input type="number" value="${p.preco}" onchange="produtos[${i}].preco=this.value;salvar();render();">
+Estoque: <input type="number" value="${p.estoque}" onchange="produtos[${i}].estoque=this.value;salvar();render();">
 `
 })
-}
-
-function alterarPreco(i,val){
-produtos[i].preco=Number(val)
-salvar()
-render()
-}
-
-function alterarEstoque(i,val){
-produtos[i].estoque=Number(val)
-salvar()
-render()
-}
-
-function resetar(i){
-produtos[i]=produtosPadrao[i]
-salvar()
-render()
-renderAdmin()
 }
 
 render()
