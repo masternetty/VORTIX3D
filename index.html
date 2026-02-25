@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>VORTIX 3D | Oficial</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #a855f7; --bg: #0d001a; --card: #1a0033; --green: #25d366; --gold: #facc15; }
+        body { font-family: 'Montserrat', sans-serif; background: var(--bg); color: white; margin: 0; padding: 0; }
+        header { background: var(--card); padding: 30px; text-align: center; border-bottom: 3px solid var(--primary); }
+        .logo { font-family: 'Orbitron', sans-serif; font-size: 35px; color: white; text-shadow: 0 0 15px var(--primary); }
+        .container { max-width: 1100px; margin: auto; padding: 30px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
+        .card { background: var(--card); border: 1px solid #330066; border-radius: 15px; overflow: hidden; text-align: center; transition: 0.3s; }
+        .card:hover { border-color: var(--primary); transform: translateY(-5px); }
+        
+        /* Ajuste para as imagens aparecerem */
+        .card img { width: 100%; height: 320px; object-fit: contain; background: #000; display: block; margin: 0 auto; }
+        
+        .info { padding: 20px; }
+        .preco { color: var(--green); font-size: 22px; font-weight: bold; margin: 10px 0; }
+        .btn { display: block; background: var(--green); color: white; padding: 12px; border-radius: 8px; text-decoration: none; font-weight: bold; margin-top: 10px; border: none; cursor: pointer; width: 100%; text-align: center; }
+        
+        /* Modal */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: var(--card); padding: 30px; border-radius: 20px; border: 2px solid var(--primary); width: 90%; max-width: 400px; text-align: center; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="logo">VORTIX 3D</div>
+</header>
+
+<div class="container">
+    <div class="grid">
+        <div class="card" style="border: 2px solid var(--gold);">
+            <img src="./loki.png">
+            <div class="info">
+                <h3>FUNKO PERSONALIZADO</h3>
+                <button class="btn" style="background: var(--gold); color: black;" onclick="abrir()">VER COMO FICARIA</button>
+                <div class="preco">R$ 180,00</div>
+                <a href="https://wa.me/5519996804873" class="btn">PEDIR AGORA</a>
+            </div>
+        </div>
+
+        <div class="card">
+            <img src="./black-noir.png">
+            <div class="info"><h3>BLACK NOIR</h3><div class="preco">R$ 95,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
+        </div>
+
+        <div class="card">
+            <img src="./indiana.png">
+            <div class="info"><h3>INDIANA JONES</h3><div class="preco">R$ 110,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
+        </div>
+
+        <div class="card">
+            <img src="./jack.png">
+            <div class="info"><h3>JACK SPARROW</h3><div class="preco">R$ 115,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
+        </div>
+
+        <div class="card">
+            <img src="./rick.png">
+            <div class="info"><h3>RICK GRIMES</h3><div class="preco">R$ 210,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
+        </div>
+
+        <div class="card">
+            <img src="./yuta.jpg">
+            <div class="info"><h3>YUTA & RIKA</h3><div class="preco">R$ 320,00</div><a href="https://wa.me/5519996804873" class="btn">COMPRAR</a></div>
+        </div>
+    </div>
+</div>
+
+<div id="janela" class="modal">
+    <div class="modal-content">
+        <h2 style="font-size: 18px;">QUER UMA PRÉVIA?</h2>
+        <p style="font-size: 13px; margin: 15px 0;">Envie sua foto para um de nossos atendentes! Eles criarão uma prévia exclusiva do seu Funko para você ver como ficaria.</p>
+        <a href="https://wa.me/5519996804873?text=Olá! Quero enviar uma foto para ver como ficaria meu Funko personalizado." class="btn">FALAR COM ATENDENTE</a>
+        <button onclick="fechar()" style="margin-top:15px; background:none; color:red; border:none; cursor:pointer; font-weight:bold;">[ FECHAR ]</button>
+    </div>
+</div>
+
+<script>
+    function abrir() { document.getElementById('janela').style.display = 'flex'; }
+    function fechar() { document.getElementById('janela').style.display = 'none'; }
+</script>
+</body>
+</html>
