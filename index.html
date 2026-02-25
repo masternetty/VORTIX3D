@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<title>VORTIX 3D</title>
+<title>VORTIX 3D | Premium</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
 
@@ -21,58 +21,81 @@ body{
 margin:0;
 font-family:'Montserrat',sans-serif;
 color:white;
-background:#0f001f;
+overflow-x:hidden;
+background:linear-gradient(-45deg,#0f001f,#1a0033,#0a0014,#140028);
+background-size:400% 400%;
+animation:gradientBG 15s ease infinite;
 }
 
-/* HEADER */
+@keyframes gradientBG{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
 header{
-padding:25px;
+padding:30px;
 text-align:center;
-background:#16002b;
+background:rgba(0,0,0,0.3);
+backdrop-filter:blur(15px);
+border-bottom:1px solid rgba(168,85,247,0.4);
 }
 
 .logo{
 font-family:'Orbitron';
-font-size:38px;
-color:#a855f7;
+font-size:42px;
+letter-spacing:2px;
+background:linear-gradient(90deg,#a855f7,#7c3aed,#c084fc);
+-webkit-background-clip:text;
+-webkit-text-fill-color:transparent;
 }
 
-/* PRODUTOS */
 .container{
 max-width:1200px;
 margin:auto;
-padding:40px 20px;
+padding:50px 20px;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:30px;
+grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+gap:35px;
 }
 
 .card{
-background:#1a0033;
-border-radius:15px;
-padding:15px;
-text-align:center;
+background:rgba(255,255,255,0.05);
+border:1px solid rgba(255,255,255,0.1);
+backdrop-filter:blur(12px);
+border-radius:20px;
+overflow:hidden;
+transition:0.4s;
 }
 
 .card img{
 width:100%;
-height:250px;
+height:320px;
 object-fit:contain;
-background:black;
-border-radius:10px;
+background:rgba(0,0,0,0.4);
 }
 
-.preco{color:var(--green);font-weight:bold;margin:10px 0;}
+.info{
+padding:20px;
+text-align:center;
+}
+
+.preco{
+color:var(--green);
+font-size:22px;
+font-weight:bold;
+margin:12px 0;
+}
 
 .btn{
-background:var(--primary);
+background:linear-gradient(90deg,var(--primary),var(--secondary));
 color:white;
+padding:12px;
 border:none;
-padding:10px;
-border-radius:8px;
+border-radius:12px;
 cursor:pointer;
 width:100%;
 font-weight:bold;
@@ -81,27 +104,27 @@ font-weight:bold;
 /* CARRINHO BOTAO */
 .carrinho-btn{
 position:fixed;
-bottom:20px;
-right:20px;
+bottom:25px;
+right:25px;
 background:var(--gold);
 color:black;
-padding:15px 20px;
+padding:15px 22px;
 border-radius:50px;
-cursor:pointer;
 font-weight:bold;
-box-shadow:0 0 15px var(--gold);
+cursor:pointer;
+box-shadow:0 0 20px var(--gold);
 z-index:999;
 }
 
 .cart-count{
-background:red;
+position:absolute;
+top:-8px;
+right:-8px;
+background:var(--red);
 color:white;
 border-radius:50%;
 padding:4px 8px;
 font-size:12px;
-position:absolute;
-top:-8px;
-right:-8px;
 }
 
 /* MODAL */
@@ -112,7 +135,7 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.8);
+background:rgba(0,0,0,0.85);
 justify-content:center;
 align-items:center;
 z-index:1000;
@@ -120,45 +143,59 @@ z-index:1000;
 
 .modal-content{
 background:#16002b;
-padding:20px;
-border-radius:15px;
 width:95%;
-max-width:450px;
+max-width:500px;
+border-radius:20px;
+padding:25px;
 position:relative;
 }
 
 .close{
 position:absolute;
-right:15px;
 top:10px;
+right:15px;
+font-size:22px;
 cursor:pointer;
-color:red;
-font-weight:bold;
+color:var(--red);
 }
 
 input{
 width:100%;
-padding:8px;
-margin:5px 0;
+padding:10px;
+margin:6px 0;
 border-radius:6px;
 border:none;
 }
 
-/* TOAST */
+.remover{
+background:red;
+border:none;
+color:white;
+padding:4px 8px;
+cursor:pointer;
+margin-left:10px;
+border-radius:6px;
+}
+
 .toast{
 position:fixed;
 top:20px;
-right:-300px;
-padding:12px 20px;
-border-radius:10px;
+right:-400px;
+padding:15px 25px;
+border-radius:12px;
 font-weight:bold;
 color:white;
-transition:0.4s;
+transition:0.4s ease;
 z-index:2000;
 }
-.toast.show{right:20px;}
-.success{background:var(--green);}
-.error{background:var(--red);}
+.toast.show{ right:20px; }
+.success{ background:var(--green); }
+.error{ background:var(--red); }
+
+.desconto{
+color:#facc15;
+font-weight:bold;
+}
 </style>
 </head>
 <body>
@@ -178,21 +215,24 @@ z-index:2000;
 
 <div class="modal" id="modalCarrinho">
 <div class="modal-content">
-<div class="close" onclick="fecharCarrinho()">X</div>
+<div class="close" onclick="fecharCarrinho()">✖</div>
 <h2>Seu Carrinho</h2>
 
 <div id="lista"></div>
 <hr>
 
-<input type="text" id="cep" placeholder="CEP">
+<input type="text" id="nome" placeholder="Seu nome">
+<input type="text" id="telefone" placeholder="Seu telefone">
+<input type="text" id="cep" placeholder="Seu CEP">
+
 <input type="text" id="cupom" placeholder="Cupom de desconto">
 <button class="btn" onclick="aplicarCupom()">Aplicar Cupom</button>
 
 <p>Frete: R$ <span id="frete">0.00</span></p>
-<p>Desconto: R$ <span id="desconto">0.00</span></p>
+<p class="desconto">Desconto: R$ <span id="valorDesconto">0.00</span></p>
 <h3>Total: R$ <span id="total">0.00</span></h3>
 
-<button class="btn" onclick="finalizar()">Finalizar</button>
+<button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
 </div>
 </div>
 
@@ -201,12 +241,15 @@ z-index:2000;
 <script>
 let produtos=[
 {nome:"Black Noir",preco:95,estoque:5,img:"black-noir.png"},
-{nome:"Indiana Jones",preco:110,estoque:3,img:"indiana.png"}
+{nome:"Indiana Jones",preco:110,estoque:3,img:"indiana.png"},
+{nome:"Jack Sparrow",preco:115,estoque:4,img:"jack.png"},
+{nome:"Rick Grimes",preco:210,estoque:2,img:"rick.png"},
+{nome:"Yuta & Rika",preco:320,estoque:2,img:"yuta.jpg"}
 ]
 
 let cart=[]
-let desconto=0
 let cupomAplicado=null
+let descontoValor=0
 
 const cupons={
 "DESCONTO10":0.10,
@@ -214,23 +257,32 @@ const cupons={
 "FRETEGRATIS":"frete"
 }
 
+function atualizarContador(){
+document.getElementById("cartCount").innerText=
+cart.reduce((total,item)=>total+item.qtd,0)
+}
+
 function renderProdutos(){
-let c=document.getElementById("produtos")
-c.innerHTML=""
+let container=document.getElementById("produtos")
+container.innerHTML=""
 produtos.forEach((p,i)=>{
-c.innerHTML+=`
+container.innerHTML+=`
 <div class="card">
 <img src="./${p.img}">
+<div class="info">
 <h3>${p.nome}</h3>
 <div class="preco">R$ ${p.preco}</div>
 <button class="btn" onclick="addToCart(${i})">Adicionar</button>
+</div>
 </div>`
 })
 }
 
-function atualizarCarrinhoIcon(){
-document.getElementById("cartCount").innerText=
-cart.reduce((a,b)=>a+b.qtd,0)
+function showToast(msg,type){
+let toast=document.getElementById("toast")
+toast.className="toast show "+type
+toast.innerText=msg
+setTimeout(()=>toast.classList.remove("show"),2500)
 }
 
 function addToCart(i){
@@ -238,23 +290,35 @@ let item=cart.find(c=>c.nome===produtos[i].nome)
 if(item)item.qtd++
 else cart.push({nome:produtos[i].nome,preco:produtos[i].preco,qtd:1})
 atualizar()
-toast("Produto adicionado","success")
+showToast("Produto adicionado","success")
+}
+
+function remover(nome){
+let item=cart.find(c=>c.nome===nome)
+if(item){
+item.qtd--
+if(item.qtd<=0)cart=cart.filter(c=>c.nome!==nome)
+}
+atualizar()
+showToast("Produto removido","error")
 }
 
 function aplicarCupom(){
 let codigo=document.getElementById("cupom").value.toUpperCase()
 if(!cupons[codigo]){
-toast("Cupom inválido","error")
+showToast("Cupom inválido","error")
 return
 }
 cupomAplicado=codigo
-toast("Cupom aplicado","success")
+showToast("Cupom aplicado","success")
 atualizar()
 }
 
 function calcularFrete(cep){
-if(cep.startsWith("13"))return 15
-return 30
+cep=cep.replace(/\D/g,"")
+if(cep.startsWith("13")) return 15
+if(cep.startsWith("01")) return 25
+return 35
 }
 
 function atualizar(){
@@ -264,30 +328,38 @@ let subtotal=0
 
 cart.forEach(item=>{
 subtotal+=item.preco*item.qtd
-lista.innerHTML+=`${item.nome} (${item.qtd}x)<br>`
+lista.innerHTML+=`${item.nome} - ${item.qtd}x 
+<button class="remover" onclick="remover('${item.nome}')">X</button><br>`
 })
 
 let cep=document.getElementById("cep").value
 let frete=cep.length>=8?calcularFrete(cep):0
-
-desconto=0
+descontoValor=0
 
 if(cupomAplicado){
 if(cupons[cupomAplicado]==="frete"){
 frete=0
 }else{
-desconto=subtotal*cupons[cupomAplicado]
+descontoValor=subtotal*cupons[cupomAplicado]
 }
 }
 
 document.getElementById("frete").innerText=frete.toFixed(2)
-document.getElementById("desconto").innerText=desconto.toFixed(2)
-document.getElementById("total").innerText=(subtotal+frete-desconto).toFixed(2)
+document.getElementById("valorDesconto").innerText=descontoValor.toFixed(2)
+document.getElementById("total").innerText=(subtotal+frete-descontoValor).toFixed(2)
 
-atualizarCarrinhoIcon()
+atualizarContador()
 }
 
-document.getElementById("cep").addEventListener("input",atualizar)
+document.getElementById("cep").addEventListener("input", atualizar)
+
+function finalizar(){
+alert("Pedido enviado!")
+cart=[]
+cupomAplicado=null
+document.getElementById("cupom").value=""
+atualizar()
+}
 
 function abrirCarrinho(){
 document.getElementById("modalCarrinho").style.display="flex"
@@ -296,21 +368,6 @@ atualizar()
 
 function fecharCarrinho(){
 document.getElementById("modalCarrinho").style.display="none"
-}
-
-function finalizar(){
-alert("Pedido finalizado!")
-cart=[]
-cupomAplicado=null
-document.getElementById("cupom").value=""
-atualizar()
-}
-
-function toast(msg,type){
-let t=document.getElementById("toast")
-t.innerText=msg
-t.className="toast show "+type
-setTimeout(()=>t.classList.remove("show"),2500)
 }
 
 renderProdutos()
