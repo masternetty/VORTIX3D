@@ -203,32 +203,12 @@ margin-left:10px;
 
 <input type="text" id="nome" placeholder="Seu nome">
 <input type="text" id="telefone" placeholder="Seu telefone">
-<input type="text" id="cep" placeholder="Seu CEP">
+<input type="text" id="cep" placeholder="Seu CEP" maxlength="9">
 
-<p>Frete: R$ <span id="frete">0</span></p>
-<h3>Total: R$ <span id="total">0</span></h3>
+<p>Frete: R$ <span id="frete">0.00</span></p>
+<h3>Total: R$ <span id="total">0.00</span></h3>
 
 <button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
-</div>
-</div>
-
-<!-- LOGIN ADMIN -->
-<div class="modal" id="loginModal">
-<div class="modal-content">
-<div class="close" onclick="fecharLogin()">✖</div>
-<h2>Login Admin</h2>
-<input type="text" id="adminUser" placeholder="Usuário">
-<input type="password" id="adminPass" placeholder="Senha">
-<button class="btn" onclick="login()">Entrar</button>
-</div>
-</div>
-
-<!-- PAINEL ADMIN -->
-<div class="modal" id="adminModal">
-<div class="modal-content">
-<div class="close" onclick="logout()">SAIR</div>
-<h2>Painel Admin</h2>
-<div id="adminProdutos"></div>
 </div>
 </div>
 
@@ -296,6 +276,7 @@ renderProdutos()
 }
 
 function calcularFrete(cep){
+cep=cep.replace(/\D/g,'')
 if(cep.startsWith("13")) return 15
 if(cep.startsWith("01")) return 25
 return 35
@@ -305,34 +286,57 @@ function atualizar(){
 let lista=document.getElementById("lista")
 lista.innerHTML=""
 let subtotal=0
+
 cart.forEach(item=>{
 subtotal+=item.preco*item.qtd
 lista.innerHTML+=`${item.nome} - ${item.qtd}x 
 <button class="remover" onclick="remover('${item.nome}')">X</button><br>`
 })
-let cep=document.getElementById("cep").value
-let frete=cep.length>=8?calcularFrete(cep):0
+
+let cep=document.getElementById("cep").value.replace(/\D/g,'')
+let frete=cep.length===8?calcularFrete(cep):0
+
 document.getElementById("frete").innerText=frete.toFixed(2)
 document.getElementById("total").innerText=(subtotal+frete).toFixed(2)
 }
+
+function formatarCEP(valor){
+valor=valor.replace(/\D/g,'')
+if(valor.length>5) valor=valor.slice(0,5)+"-"+valor.slice(5,8)
+return valor
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+document.getElementById("cep").addEventListener("input",(e)=>{
+e.target.value=formatarCEP(e.target.value)
+atualizar()
+})
+})
 
 function finalizar(){
 let nome=document.getElementById("nome").value
 let telefone=document.getElementById("telefone").value
 let cep=document.getElementById("cep").value
-if(cart.length==0||!nome||!telefone||!cep){alert("Preencha tudo corretamente");return}
+if(cart.length==0||!nome||!telefone||cep.replace(/\D/g,'').length!==8){
+alert("Preencha tudo corretamente")
+return
+}
 
 let subtotal=0
 let msg="🛒 *Novo Pedido - VORTIX 3D*%0A%0A"
 msg+=`👤 ${nome}%0A📞 ${telefone}%0A📍 CEP: ${cep}%0A%0A`
+
 cart.forEach(item=>{
 let totalItem=item.preco*item.qtd
 subtotal+=totalItem
 msg+=`• ${item.nome} - ${item.qtd}x - R$ ${totalItem.toFixed(2)}%0A`
 })
+
 let frete=calcularFrete(cep)
 let total=subtotal+frete
+
 msg+=`%0A🚚 Frete: R$ ${frete.toFixed(2)}%0A💰 Total: R$ ${total.toFixed(2)}`
+
 window.open(`https://wa.me/5519996804873?text=${msg}`,"_blank")
 
 cart=[]
@@ -342,36 +346,6 @@ atualizar()
 
 function abrirCarrinho(){document.getElementById("modalCarrinho").style.display="flex"; atualizar()}
 function fecharCarrinho(){document.getElementById("modalCarrinho").style.display="none"}
-
-function abrirLogin(){document.getElementById("loginModal").style.display="flex"}
-function fecharLogin(){document.getElementById("loginModal").style.display="none"}
-
-function login(){
-let u=document.getElementById("adminUser").value
-let p=document.getElementById("adminPass").value
-if(u===ADMIN_USER&&p===ADMIN_PASS){fecharLogin();abrirAdmin()}
-else{alert("Login incorreto")}
-}
-
-function abrirAdmin(){
-document.getElementById("adminModal").style.display="flex"
-renderAdmin()
-}
-
-function logout(){document.getElementById("adminModal").style.display="none"}
-
-function renderAdmin(){
-let container=document.getElementById("adminProdutos")
-container.innerHTML=""
-estoque.forEach((p,i)=>{
-container.innerHTML+=`
-<hr>
-<h3>${p.nome}</h3>
-Preço: <input type="number" value="${p.preco}" onchange="estoque[${i}].preco=this.value;salvar();renderProdutos();">
-Estoque: <input type="number" value="${p.estoque}" onchange="estoque[${i}].estoque=this.value;salvar();renderProdutos();">
-`
-})
-}
 
 renderProdutos()
 </script>
