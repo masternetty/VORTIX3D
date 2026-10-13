@@ -1,11 +1,13 @@
-HTML
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>3D Store Lab | Premium</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+<!-- Fontes e Ícones -->
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <style>
 :root{
@@ -14,6 +16,7 @@ HTML
 --green:#22c55e;
 --red:#ef4444;
 --gold:#facc15;
+--dark:#0f001f;
 }
 
 *{box-sizing:border-box}
@@ -26,6 +29,7 @@ overflow-x:hidden;
 background:linear-gradient(-45deg,#0f001f,#1a0033,#0a0014,#140028);
 background-size:400% 400%;
 animation:gradientBG 15s ease infinite;
+min-height:100vh;
 }
 
 @keyframes gradientBG{
@@ -44,35 +48,49 @@ z-index:-1;
 pointer-events:none;
 }
 
-/* HEADER */
 header{
-padding:30px;
-text-align:center;
-background:rgba(0,0,0,0.3);
+padding:25px 30px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:rgba(0,0,0,0.4);
 backdrop-filter:blur(15px);
 border-bottom:1px solid rgba(168,85,247,0.4);
+position:sticky;
+top:0;
+z-index:1000;
 }
 
 .logo{
 font-family:'Orbitron';
-font-size:38px;
+font-size:28px;
 letter-spacing:2px;
 background:linear-gradient(90deg,#a855f7,#7c3aed,#c084fc);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
-/* CONTAINER */
+.user-status{
+font-size:14px;
+background:rgba(168,85,247,0.2);
+padding:6px 14px;
+border-radius:20px;
+border:1px solid rgba(168,85,247,0.4);
+display:flex;
+align-items:center;
+gap:8px;
+}
+
 .container{
 max-width:1200px;
 margin:auto;
-padding:50px 20px;
+padding:40px 20px;
 }
 
 .grid{
 display:grid;
 grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-gap:35px;
+gap:30px;
 }
 
 .card{
@@ -83,18 +101,22 @@ border-radius:20px;
 overflow:hidden;
 transition:0.4s;
 box-shadow:0 0 30px rgba(168,85,247,0.15);
+display:flex;
+flex-direction:column;
+justify-content:space-between;
 }
 
 .card:hover{
-transform:translateY(-10px) scale(1.03);
-box-shadow:0 0 40px rgba(168,85,247,0.6);
+transform:translateY(-8px) scale(1.02);
+box-shadow:0 0 40px rgba(168,85,247,0.5);
 }
 
 .card img{
 width:100%;
-height:320px;
+height:260px;
 object-fit:contain;
-background:rgba(0,0,0,0.4);
+background:rgba(0,0,0,0.3);
+padding:10px;
 }
 
 .info{
@@ -119,50 +141,64 @@ cursor:pointer;
 width:100%;
 font-weight:bold;
 transition:0.3s;
+display:flex;
+align-items:center;
+justify-content:center;
+gap:8px;
 }
 
-.btn:hover{ transform:scale(1.05); }
-.btn:disabled{ opacity:0.6; cursor:not-allowed; transform:none; }
+.btn:hover{ transform:scale(1.03); opacity:0.9; }
+.btn:disabled{ opacity:0.5; cursor:not-allowed; transform:none; }
 
-.estoque{ font-size:13px;color:#ccc; }
+.estoque{ font-size:13px; color:#bbb; margin-bottom:10px; }
 
-/* BOTÃO CARRINHO FIXO */
-.carrinho-btn{
+.floating-dock{
 position:fixed;
 bottom:25px;
 right:25px;
-background:var(--gold);
-color:black;
-width:65px;
-height:65px;
+display:flex;
+flex-direction:column;
+gap:15px;
+z-index:2000;
+}
+
+.float-btn{
+width:55px;
+height:55px;
 border-radius:50%;
 display:flex;
 align-items:center;
 justify-content:center;
-font-size:26px;
+font-size:22px;
 cursor:pointer;
-box-shadow:0 0 20px var(--gold);
-z-index:2000;
+box-shadow:0 6px 20px rgba(0,0,0,0.5);
 transition:0.3s;
+border:none;
+position:relative;
+color:white;
 }
 
-.carrinho-btn:hover{
+.float-btn:hover{
 transform:scale(1.1);
 }
 
-.cart-count{
+.btn-cart{ background:var(--gold); color:black; }
+.btn-user{ background:var(--primary); }
+.btn-admin{ background:#3b82f6; display:none; }
+.btn-support{ background:#10b981; }
+
+.badge-count{
 position:absolute;
 top:-5px;
 right:-5px;
 background:var(--red);
 color:white;
-font-size:12px;
-padding:4px 7px;
+font-size:11px;
+padding:3px 7px;
 border-radius:50%;
 font-weight:bold;
 }
 
-/* MODAL */
 .modal{
 display:none;
 position:fixed;
@@ -174,67 +210,102 @@ background:rgba(0,0,0,0.85);
 justify-content:center;
 align-items:center;
 z-index:3000;
+backdrop-filter:blur(5px);
 }
 
 .modal-content{
 background:#16002b;
-width:95%;
+width:92%;
 max-width:500px;
 border-radius:20px;
 padding:25px;
 position:relative;
 max-height:90vh;
-overflow:auto;
-border:1px solid rgba(168,85,247,0.3);
+overflow-y:auto;
+border:1px solid rgba(168,85,247,0.4);
+box-shadow:0 0 50px rgba(168,85,247,0.3);
 }
 
 .close{
 position:absolute;
-top:10px;
-right:15px;
-font-size:22px;
+top:15px;
+right:20px;
+font-size:20px;
 cursor:pointer;
 color:var(--red);
 font-weight:bold;
+background:rgba(239,68,68,0.1);
+width:35px;
+height:35px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+transition:0.3s;
 }
+.close:hover{ background:var(--red); color:white; }
 
-input{
+input, select, textarea{
 width:100%;
-padding:10px;
+padding:12px;
 margin:8px 0;
-border-radius:6px;
+border-radius:8px;
 border:1px solid rgba(255,255,255,0.2);
-background:rgba(0,0,0,0.2);
+background:rgba(0,0,0,0.3);
 color:white;
+font-family:'Montserrat',sans-serif;
 }
 
-input:focus{
+input:focus, select:focus, textarea:focus{
 outline:none;
 border-color:var(--primary);
+box-shadow:0 0 10px rgba(168,85,247,0.3);
 }
 
 .carrinho-item{
 display:flex;
 justify-content:space-between;
 align-items:center;
-margin-bottom:8px;
+margin-bottom:10px;
 font-size:14px;
-background:rgba(255,255,255,0.03);
-padding:8px;
-border-radius:6px;
+background:rgba(255,255,255,0.04);
+padding:10px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,0.05);
 }
 
 .remover{
 background:var(--red);
 border:none;
 color:white;
-padding:4px 8px;
+padding:6px 10px;
 cursor:pointer;
 border-radius:6px;
 font-weight:bold;
+transition:0.3s;
+}
+.remover:hover{ opacity:0.8; }
+
+.faq-item{
+background:rgba(255,255,255,0.03);
+margin:10px 0;
+padding:12px;
+border-radius:8px;
+border:1px solid rgba(255,255,255,0.05);
+cursor:pointer;
+}
+.faq-question{ font-weight:600; font-size:14px; display:flex; justify-content:space-between; }
+.faq-answer{ font-size:13px; color:#ccc; margin-top:8px; display:none; }
+
+.historico-box{
+background:rgba(0,0,0,0.3);
+padding:10px;
+border-radius:8px;
+margin-top:10px;
+font-size:13px;
+border:1px solid rgba(168,85,247,0.2);
 }
 
-/* TOAST */
 .toast{
 position:fixed;
 top:20px;
@@ -245,8 +316,8 @@ font-weight:bold;
 color:white;
 transition:0.4s ease;
 z-index:4000;
+box-shadow:0 5px 15px rgba(0,0,0,0.3);
 }
-
 .toast.show{ right:20px; }
 .toast.success{ background:var(--green); }
 .toast.error{ background:var(--red); }
@@ -257,38 +328,122 @@ z-index:4000;
 <canvas id="particles"></canvas>
 
 <header>
-<div class="logo">3D STORE LAB</div>
+<div class="logo"><i class="fa-solid fa-cube"></i> 3D STORE LAB</div>
+<div class="user-status" id="userStatusDisplay">
+<i class="fa-solid fa-user-circle"></i> <span id="userNameHeader">Visitante</span>
+</div>
 </header>
 
 <div class="container">
 <div class="grid" id="produtos"></div>
 </div>
 
-<!-- CARRINHO FIXO -->
-<div class="carrinho-btn" onclick="abrirCarrinho()">
-🛒
-<div class="cart-count" id="cartCount">0</div>
+<div class="floating-dock">
+<button class="float-btn btn-cart" onclick="abrirCarrinho()" title="Carrinho">
+<i class="fa-solid fa-shopping-cart"></i>
+<div class="badge-count" id="cartCount">0</div>
+</button>
+<button class="float-btn btn-user" onclick="abrirConta()" title="Conta / Login">
+<i class="fa-solid fa-user"></i>
+</button>
+<button class="float-btn btn-admin" id="adminFloatBtn" onclick="abrirAdmin()" title="Painel Admin">
+<i class="fa-solid fa-screwdriver-wrench"></i>
+</button>
+<button class="float-btn btn-support" onclick="abrirSuporte()" title="Suporte">
+<i class="fa-solid fa-headset"></i>
+</button>
 </div>
 
 <div class="modal" id="modalCarrinho">
 <div class="modal-content">
-<div class="close" onclick="fecharCarrinho()">✖</div>
-<h2>Seu Carrinho</h2>
-<div id="lista"></div>
+<div class="close" onclick="fecharModal('modalCarrinho')"><i class="fa-solid fa-xmark"></i></div>
+<h2><i class="fa-solid fa-cart-shopping"></i> Seu Carrinho</h2>
+<div id="listaCarrinho"></div>
 <hr style="border-color:rgba(255,255,255,0.1); margin:15px 0;">
-<input type="text" id="nome" placeholder="Seu nome">
-<input type="text" id="telefone" placeholder="Seu telefone (WhatsApp)">
-<input type="text" id="cep" placeholder="Seu CEP (Apenas números)">
-<p>Frete: R$ <span id="frete">0.00</span></p>
-<h3>Total: R$ <span id="total">0.00</span></h3>
-<button class="btn" onclick="finalizar()">Finalizar pelo WhatsApp</button>
+<input type="text" id="checkoutNome" placeholder="Seu nome completo">
+<input type="text" id="checkoutTel" placeholder="Seu WhatsApp (com DDD)">
+<input type="text" id="checkoutCep" placeholder="Seu CEP (Apenas números)">
+<input type="text" id="checkoutRua" placeholder="Endereço / Rua e Número">
+<p style="margin:8px 0; font-size:14px;">Frete: R$ <span id="frete">0.00</span></p>
+<h3 style="margin-bottom:15px;">Total: R$ <span id="total">0.00</span></h3>
+<button class="btn" onclick="finalizarPedido()"><i class="fa-brands fa-whatsapp"></i> Finalizar pelo WhatsApp</button>
+</div>
+</div>
+
+<div class="modal" id="modalConta">
+<div class="modal-content">
+<div class="close" onclick="fecharModal('modalConta')"><i class="fa-solid fa-xmark"></i></div>
+<div id="contaNaoLogada">
+<h2><i class="fa-solid fa-user-lock"></i> Entrar ou Cadastrar</h2>
+<p style="font-size:13px; color:#bbb; margin-bottom:15px;">Para gerenciar endereços e salvar histórico de compras.</p>
+<input type="email" id="authEmail" placeholder="Seu E-mail (ex: admin@3dstore.com para admin)">
+<input type="password" id="authSenha" placeholder="Sua Senha (admin123 para dono)">
+<button class="btn" onclick="realizarLogin()" style="margin-top:10px;"><i class="fa-solid fa-right-to-bracket"></i> Entrar / Cadastrar</button>
+</div>
+<div id="contaLogada" style="display:none;">
+<h2><i class="fa-solid fa-id-card"></i> Olá, <span id="perfilNome"></span></h2>
+<p style="font-size:13px; color:#bbb; margin-bottom:10px;">E-mail: <span id="perfilEmail"></span></p>
+<div style="background:rgba(168,85,247,0.1); padding:12px; border-radius:10px; margin:10px 0;">
+<h4 style="margin:0 0 5px 0; font-size:14px; color:var(--primary);">Endereço Salvo:</h4>
+<p id="perfilEndereco" style="margin:0; font-size:13px; color:#ddd;">Nenhum endereço cadastrado</p>
+</div>
+<h4 style="margin:15px 0 5px 0; font-size:14px;"><i class="fa-solid fa-bag-shopping"></i> Histórico de Compras:</h4>
+<div id="historicoCompras" style="max-height:150px; overflow-y:auto;"></div>
+<button class="btn" onclick="fazerLogout()" style="background:var(--red); margin-top:15px;"><i class="fa-solid fa-right-from-bracket"></i> Sair da Conta</button>
+</div>
+</div>
+</div>
+
+<div class="modal" id="modalAdmin">
+<div class="modal-content" style="max-width:650px;">
+<div class="close" onclick="fecharModal('modalAdmin')"><i class="fa-solid fa-xmark"></i></div>
+<h2><i class="fa-solid fa-screwdriver-wrench"></i> Painel do Dono - 3D Store Lab</h2>
+<p style="font-size:13px; color:#bbb; margin-bottom:15px;">Gerencie produtos e estoques em tempo real.</p>
+
+<div style="background:rgba(255,255,255,0.03); padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid rgba(255,255,255,0.08);">
+<h3 style="margin-top:0; font-size:16px; color:var(--primary);">Adicionar Novo Produto</h3>
+<input type="text" id="novoNome" placeholder="Nome da peça 3D">
+<input type="number" id="novoPreco" placeholder="Preço (R$)">
+<input type="number" id="novoEstoque" placeholder="Quantidade em Estoque">
+<input type="text" id="novoImg" placeholder="Nome da imagem (ex: item.png ou url)">
+<button class="btn" onclick="adicionarProduto()" style="margin-top:5px;"><i class="fa-solid fa-plus"></i> Cadastrar Produto</button>
+</div>
+
+<h3 style="font-size:16px; margin-bottom:10px;">Produtos Cadastrados</h3>
+<div id="adminListaProdutos" style="max-height:250px; overflow-y:auto; display:flex; flex-direction:column; gap:8px;"></div>
+</div>
+</div>
+
+<div class="modal" id="modalSuporte">
+<div class="modal-content">
+<div class="close" onclick="fecharModal('modalSuporte')"><i class="fa-solid fa-xmark"></i></div>
+<h2><i class="fa-solid fa-headset"></i> Central de Suporte</h2>
+<p style="font-size:13px; color:#bbb; margin-bottom:15px;">Tire dúvidas ou fale diretamente com nossa equipe.</p>
+
+<a href="https://wa.me/5519996804873?text=Olá,%20preciso%20de%20suporte%20na%203D%20Store%20Lab!" target="_blank" class="btn" style="background:#25d366; margin-bottom:15px; text-decoration:none;">
+<i class="fa-brands fa-whatsapp"></i> Chamar no WhatsApp (19 99680-4873)
+</a>
+
+<h4 style="margin:15px 0 10px 0; font-size:14px;"><i class="fa-solid fa-circle-question"></i> Perguntas Frequentes (FAQ)</h4>
+<div class="faq-item" onclick="toggleFaq(this)">
+<div class="faq-question">Qual o material utilizado nas impressões? <i class="fa-solid fa-chevron-down"></i></div>
+<div class="faq-answer">Utilizamos polímeros premium de alta resistência (PLA+ e ABS de engenharia) com excelente nível de detalhamento e acabamento manual.</div>
+</div>
+<div class="faq-item" onclick="toggleFaq(this)">
+<div class="faq-question">Como funciona o envio e frete? <i class="fa-solid fa-chevron-down"></i></div>
+<div class="faq-answer">Enviamos para todo o Brasil via Correios ou Transportadora com embalagem reforçada anti-impacto.</div>
+</div>
+<div class="faq-item" onclick="toggleFaq(this)">
+<div class="faq-question">Posso encomendar uma peça personalizada? <i class="fa-solid fa-chevron-down"></i></div>
+<div class="faq-answer">Sim! Entre em contato pelo nosso WhatsApp informando o modelo ou arquivo 3D desejado para orçamento.</div>
+</div>
 </div>
 </div>
 
 <div id="toast" class="toast"></div>
 
 <script>
-/* ANIMAÇÃO DE PARTÍCULAS NO FUNDO */
+/* Partículas no fundo */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let particlesArray = [];
@@ -305,8 +460,8 @@ class Particle {
         this.x = Math.random() * canvas.width;
         this.y = Math.random() * canvas.height;
         this.size = Math.random() * 2 + 1;
-        this.speedX = (Math.random() - 0.5) * 0.5;
-        this.speedY = (Math.random() - 0.5) * 0.5;
+        this.speedX = (Math.random() - 0.5) * 0.4;
+        this.speedY = (Math.random() - 0.5) * 0.4;
     }
     update() {
         this.x += this.speedX;
@@ -317,7 +472,7 @@ class Particle {
         if (this.y < 0) this.y = canvas.height;
     }
     draw() {
-        ctx.fillStyle = "rgba(168, 85, 247, 0.5)";
+        ctx.fillStyle = "rgba(168, 85, 247, 0.4)";
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
         ctx.fill();
@@ -326,176 +481,360 @@ class Particle {
 
 function initParticles() {
     particlesArray = [];
-    for (let i = 0; i < 50; i++) {
-        particlesArray.push(new Particle());
-    }
+    for (let i = 0; i < 45; i++) particlesArray.push(new Particle());
 }
 initParticles();
 
 function animateParticles() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    particlesArray.forEach(p => {
-        p.update();
-        p.draw();
-    });
+    particlesArray.forEach(p => { p.update(); p.draw(); });
     requestAnimationFrame(animateParticles);
 }
 animateParticles();
 
-/* LOJA */
-let produtos = [
-{nome:"Black Noir",preco:95,estoque:5,img:"black-noir.png"},
-{nome:"Indiana Jones",preco:110,estoque:3,img:"indiana.png"},
-{nome:"Jack Sparrow",preco:115,estoque:4,img:"jack.png"},
-{nome:"Rick Grimes",preco:210,estoque:2,img:"rick.png"},
-{nome:"Yuta & Rika",preco:320,estoque:2,img:"yuta.jpg"}
+/* Estado Global da Loja (com localStorage para persistência) */
+let produtos = JSON.parse(localStorage.getItem("3dstore_produtos")) || [
+    {nome:"Black Noir", preco:95, estoque:5, img:"black-noir.png"},
+    {nome:"Indiana Jones", preco:110, estoque:3, img:"indiana.png"},
+    {nome:"Jack Sparrow", preco:115, estoque:4, img:"jack.png"},
+    {nome:"Rick Grimes", preco:210, estoque:2, img:"rick.png"},
+    {nome:"Yuta & Rika", preco:320, estoque:2, img:"yuta.jpg"}
 ];
 
 let cart = [];
+let usuarioLogado = JSON.parse(localStorage.getItem("3dstore_usuario")) || null;
 
-function atualizarContador(){
-let totalItens = 0;
-cart.forEach(i => totalItens += i.qtd);
-document.getElementById("cartCount").innerText = totalItens;
+function salvarProdutosLocalStorage() {
+    localStorage.setItem("3dstore_produtos", JSON.stringify(produtos));
 }
 
-function renderProdutos(){
-let container = document.getElementById("produtos");
-container.innerHTML = "";
-produtos.forEach((p, i) => {
-container.innerHTML += `
-<div class="card">
-<img src="./${p.img}" alt="${p.nome}">
-<div class="info">
-<h3>${p.nome}</h3>
-<div class="preco">R$ ${p.preco.toFixed(2)}</div>
-<div class="estoque">Estoque: ${p.estoque}</div>
-<button class="btn" onclick="addToCart(${i})" ${p.estoque <= 0 ? "disabled" : ""}>
-${p.estoque <= 0 ? "ESGOTADO" : "Adicionar ao Carrinho"}
-</button>
-</div>
-</div>`;
-});
+function atualizarContadorCart() {
+    let totalItens = 0;
+    cart.forEach(i => totalItens += i.qtd);
+    document.getElementById("cartCount").innerText = totalItens;
+}
+
+function renderProdutos() {
+    let container = document.getElementById("produtos");
+    container.innerHTML = "";
+    produtos.forEach((p, i) => {
+        container.innerHTML += `
+        <div class="card">
+            <img src="./${p.img}" alt="${p.nome}" onerror="this.src='https://placehold.co/300x260/16002b/a855f7?text=3D+Store+Lab'">
+            <div class="info">
+                <h3>${p.nome}</h3>
+                <div class="preco">R$ ${p.preco.toFixed(2)}</div>
+                <div class="estoque">Estoque: ${p.estoque} unidades</div>
+                <button class="btn" onclick="addToCart(${i})" ${p.estoque <= 0 ? "disabled" : ""}>
+                    <i class="fa-solid fa-cart-plus"></i> ${p.estoque <= 0 ? "ESGOTADO" : "Adicionar"}
+                </button>
+            </div>
+        </div>`;
+    });
 }
 
 function showToast(msg, type){
-let toast = document.getElementById("toast");
-toast.className = "toast " + type;
-toast.innerText = msg;
-toast.classList.add("show");
-setTimeout(() => toast.classList.remove("show"), 2500);
+    let toast = document.getElementById("toast");
+    toast.className = "toast " + type;
+    toast.innerText = msg;
+    toast.classList.add("show");
+    setTimeout(() => toast.classList.remove("show"), 2500);
 }
 
 function addToCart(i){
-if(produtos[i].estoque <= 0) return;
-produtos[i].estoque--;
-let item = cart.find(c => c.nome === produtos[i].nome);
-if(item) item.qtd++;
-else cart.push({nome: produtos[i].nome, preco: produtos[i].preco, qtd: 1});
-renderProdutos();
-atualizar();
-atualizarContador();
-showToast("✔ Produto adicionado", "success");
+    if(produtos[i].estoque <= 0) return;
+    produtos[i].estoque--;
+    salvarProdutosLocalStorage();
+    let item = cart.find(c => c.nome === produtos[i].nome);
+    if(item) item.qtd++;
+    else cart.push({nome: produtos[i].nome, preco: produtos[i].preco, qtd: 1});
+    renderProdutos();
+    atualizarCarrinhoModal();
+    atualizarContadorCart();
+    showToast("✔ Produto adicionado ao carrinho!", "success");
 }
 
-function remover(nome){
-let item = cart.find(c => c.nome === nome);
-if(item){
-item.qtd--;
-if(item.qtd <= 0) cart = cart.filter(c => c.nome !== nome);
-let prod = produtos.find(p => p.nome === nome);
-if(prod) prod.estoque++;
-}
-renderProdutos();
-atualizar();
-atualizarContador();
-showToast("✖ Produto removido", "error");
+function removerItemCarrinho(nome){
+    let item = cart.find(c => c.nome === nome);
+    if(item){
+        item.qtd--;
+        let prod = produtos.find(p => p.nome === nome);
+        if(prod) prod.estoque++;
+        salvarProdutosLocalStorage();
+        if(item.qtd <= 0) cart = cart.filter(c => c.nome !== nome);
+    }
+    renderProdutos();
+    atualizarCarrinhoModal();
+    atualizarContadorCart();
+    showToast("Item removido do carrinho", "error");
 }
 
 function calcularFrete(cep){
-cep = cep.replace(/\D/g,"");
-if(cep.startsWith("13")) return 15;
-if(cep.startsWith("01")) return 25;
-return 35;
+    cep = cep.replace(/\D/g,"");
+    if(cep.startsWith("13")) return 15;
+    if(cep.startsWith("01")) return 25;
+    return 35;
 }
 
-function atualizar(){
-let lista = document.getElementById("lista");
-lista.innerHTML = "";
-let subtotal = 0;
+function atualizarCarrinhoModal(){
+    let lista = document.getElementById("listaCarrinho");
+    lista.innerHTML = "";
+    let subtotal = 0;
 
-if(cart.length === 0){
-lista.innerHTML = "<p style='text-align:center; color:#aaa;'>Seu carrinho está vazio.</p>";
+    if(cart.length === 0){
+        lista.innerHTML = "<p style='text-align:center; color:#aaa; padding:15px;'>Seu carrinho está vazio.</p>";
+    }
+
+    cart.forEach(item => {
+        subtotal += item.preco * item.qtd;
+        lista.innerHTML += `
+        <div class="carrinho-item">
+            <span><b>${item.nome}</b> (${item.qtd}x) - R$ ${(item.preco * item.qtd).toFixed(2)}</span>
+            <button class="remover" onclick="removerItemCarrinho('${item.nome}')"><i class="fa-solid fa-trash"></i></button>
+        </div>`;
+    });
+
+    let cep = document.getElementById("checkoutCep").value;
+    let frete = cep.length >= 8 ? calcularFrete(cep) : 0;
+    document.getElementById("frete").innerText = frete.toFixed(2);
+    document.getElementById("total").innerText = (subtotal + frete).toFixed(2);
 }
 
-cart.forEach(item => {
-subtotal += item.preco * item.qtd;
-lista.innerHTML += `
-<div class="carrinho-item">
-<span>${item.nome} (${item.qtd}x) - R$ ${(item.preco * item.qtd).toFixed(2)}</span>
-<button class="remover" onclick="remover('${item.nome}')">X</button>
-</div>`;
-});
+document.getElementById("checkoutCep").addEventListener("input", atualizarCarrinhoModal);
 
-let cep = document.getElementById("cep").value;
-let frete = cep.length >= 8 ? calcularFrete(cep) : 0;
-document.getElementById("frete").innerText = frete.toFixed(2);
-document.getElementById("total").innerText = (subtotal + frete).toFixed(2);
+function finalizarPedido(){
+    if(cart.length === 0){
+        showToast("Seu carrinho está vazio!", "error");
+        return;
+    }
+    let nome = document.getElementById("checkoutNome").value.trim();
+    let tel = document.getElementById("checkoutTel").value.trim();
+    let cep = document.getElementById("checkoutCep").value.trim();
+    let rua = document.getElementById("checkoutRua").value.trim();
+
+    if(!nome || !tel || !cep || !rua){
+        showToast("Preencha todos os dados de entrega!", "error");
+        return;
+    }
+
+    let subtotal = 0;
+    let mensagem = `*Novo Pedido - 3D Store Lab*%0A%0A`;
+    mensagem += `👤 *Cliente:* ${nome}%0A`;
+    mensagem += `📞 *Telefone:* ${tel}%0A`;
+    mensagem += `📍 *Endereço:* ${rua} - CEP: ${cep}%0A%0A`;
+    mensagem += `🛒 *Itens do Pedido:*%0A`;
+
+    cart.forEach(item => {
+        let totalItem = item.preco * item.qtd;
+        subtotal += totalItem;
+        mensagem += `- ${item.nome} (${item.qtd}x) - R$ ${totalItem.toFixed(2)}%0A`;
+    });
+
+    let frete = calcularFrete(cep);
+    let totalGeral = subtotal + frete;
+
+    mensagem += `%0A📦 *Frete:* R$ ${frete.toFixed(2)}`;
+    mensagem += `%0A💰 *Total Geral:* R$ ${totalGeral.toFixed(2)}`;
+
+    // Salvar no histórico se houver usuário logado
+    if(usuarioLogado){
+        if(!usuarioLogado.historico) usuarioLogado.historico = [];
+        usuarioLogado.historico.push({
+            data: new Date().toLocaleDateString('pt-BR'),
+            itens: [...cart],
+            total: totalGeral,
+            endereco: `${rua} - CEP: ${cep}`
+        });
+        usuarioLogado.endereco = `${rua} - CEP: ${cep}`;
+        localStorage.setItem("3dstore_usuario", JSON.stringify(usuarioLogado));
+        atualizarPainelConta();
+    }
+
+    let numeroWhatsApp = "5519996804873";
+    window.open(`https://wa.me/${numeroWhatsApp}?text=${mensagem}`, "_blank");
 }
 
-document.getElementById("cep").addEventListener("input", atualizar);
+/* Funções de Autenticação e Conta */
+function realizarLogin(){
+    let email = document.getElementById("authEmail").value.trim();
+    let senha = document.getElementById("authSenha").value.trim();
 
-function finalizar(){
-if(cart.length === 0){
-showToast("Carrinho vazio!", "error");
-return;
+    if(!email || !senha){
+        showToast("Preencha e-mail e senha!", "error");
+        return;
+    }
+
+    let isAdmin = (email === "admin@3dstore.com" && senha === "admin123");
+    
+    usuarioLogado = {
+        email: email,
+        nome: isAdmin ? "Dono (Admin)" : email.split("@")[0],
+        isAdmin: isAdmin,
+        endereco: "Não cadastrado",
+        historico: []
+    };
+
+    localStorage.setItem("3dstore_usuario", JSON.stringify(usuarioLogado));
+    atualizarPainelConta();
+    fecharModal("modalConta");
+    showToast("✔ Login realizado com sucesso!", "success");
 }
 
-let nome = document.getElementById("nome").value.trim();
-let telefone = document.getElementById("telefone").value.trim();
-let cep = document.getElementById("cep").value.trim();
-
-if(!nome || !telefone || !cep){
-showToast("Preencha todos os campos!", "error");
-return;
+function fazerLogout(){
+    usuarioLogado = null;
+    localStorage.removeItem("3dstore_usuario");
+    atualizarPainelConta();
+    fecharModal("modalConta");
+    showToast("Sessão encerrada", "success");
 }
 
-let subtotal = 0;
-let mensagem = `*Novo Pedido - 3D Store Lab*%0A%0A`;
-mensagem += `👤 *Nome:* ${nome}%0A`;
-mensagem += `📞 *Telefone:* ${telefone}%0A`;
-mensagem += `📍 *CEP:* ${cep}%0A%0A`;
-mensagem += `🛒 *Itens:*%0A`;
+function atualizarPainelConta(){
+    let headerDisplay = document.getElementById("userNameHeader");
+    let adminBtn = document.getElementById("adminFloatBtn");
+    let naoLogado = document.getElementById("contaNaoLogada");
+    let logado = document.getElementById("contaLogada");
 
-cart.forEach(item => {
-let totalItem = item.preco * item.qtd;
-subtotal += totalItem;
-mensagem += `- ${item.nome} (${item.qtd}x) - R$ ${totalItem.toFixed(2)}%0A`;
-});
+    if(usuarioLogado){
+        headerDisplay.innerText = usuarioLogado.nome;
+        naoLogado.style.display = "none";
+        logado.style.display = "block";
+        document.getElementById("perfilNome").innerText = usuarioLogado.nome;
+        document.getElementById("perfilEmail").innerText = usuarioLogado.email;
+        document.getElementById("perfilEndereco").innerText = usuarioLogado.endereco || "Nenhum endereço cadastrado";
 
-let frete = calcularFrete(cep);
-let totalGeral = subtotal + frete;
+        let histDiv = document.getElementById("historicoCompras");
+        histDiv.innerHTML = "";
+        if(usuarioLogado.historico && usuarioLogado.historico.length > 0){
+            usuarioLogado.historico.forEach(h => {
+                histDiv.innerHTML += `
+                <div class="historico-box">
+                    <b>Data:</b> ${h.data} | <b>Total:</b> R$ ${h.total.toFixed(2)}<br>
+                    <b>Entrega:</b> ${h.endereco}
+                </div>`;
+            });
+        } else {
+            histDiv.innerHTML = "<p style='color:#aaa; font-size:12px; margin:5px 0;'>Nenhuma compra realizada ainda.</p>";
+        }
 
-mensagem += `%0A📦 *Frete:* R$ ${frete.toFixed(2)}`;
-mensagem += `%0A💰 *Total:* R$ ${totalGeral.toFixed(2)}`;
-
-let numeroWhatsApp = "5519996804873"; 
-
-let url = `https://wa.me/${numeroWhatsApp}?text=${mensagem}`;
-window.open(url, "_blank");
+        if(usuarioLogado.isAdmin){
+            adminBtn.style.display = "flex";
+        } else {
+            adminBtn.style.display = "none";
+        }
+    } else {
+        headerDisplay.innerText = "Visitante";
+        naoLogado.style.display = "block";
+        logado.style.display = "none";
+        adminBtn.style.display = "none";
+    }
 }
 
+/* Painel Administrativo */
+function renderAdminProdutos(){
+    let lista = document.getElementById("adminListaProdutos");
+    lista.innerHTML = "";
+    produtos.forEach((p, i) => {
+        lista.innerHTML += `
+        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(255,255,255,0.02); padding:10px; border-radius:8px; border:1px solid rgba(255,255,255,0.05);">
+            <div>
+                <b>${p.nome}</b> - R$ ${p.preco.toFixed(2)}<br>
+                <small style="color:#ccc;">Estoque: ${p.estoque}</small>
+            </div>
+            <div style="display:flex; gap:8px;">
+                <input type="number" id="est_${i}" value="${p.estoque}" style="width:60px; padding:6px; margin:0;" min="0">
+                <button class="btn" onclick="atualizarEstoque(${i})" style="padding:6px 12px; font-size:12px;"><i class="fa-solid fa-check"></i></button>
+                <button class="remover" onclick="excluirProduto(${i})" style="padding:6px 10px;"><i class="fa-solid fa-trash"></i></button>
+            </div>
+        </div>`;
+    });
+}
+
+function atualizarEstoque(i){
+    let novoVal = parseInt(document.getElementById(`est_${i}`).value);
+    if(!isNaN(novoVal) && novoVal >= 0){
+        produtos[i].estoque = novoVal;
+        salvarProdutosLocalStorage();
+        renderProdutos();
+        renderAdminProdutos();
+        showToast("Estoque atualizado!", "success");
+    }
+}
+
+function adicionarProduto(){
+    let nome = document.getElementById("novoNome").value.trim();
+    let preco = parseFloat(document.getElementById("novoPreco").value);
+    let estoque = parseInt(document.getElementById("novoEstoque").value);
+    let img = document.getElementById("novoImg").value.trim() || "default.png";
+
+    if(!nome || isNaN(preco) || isNaN(estoque)){
+        showToast("Preencha corretamente os dados do produto!", "error");
+        return;
+    }
+
+    produtos.push({nome, preco, estoque, img});
+    salvarProdutosLocalStorage();
+    renderProdutos();
+    renderAdminProdutos();
+    
+    document.getElementById("novoNome").value = "";
+    document.getElementById("novoPreco").value = "";
+    document.getElementById("novoEstoque").value = "";
+    document.getElementById("novoImg").value = "";
+    showToast("✔ Produto cadastrado com sucesso!", "success");
+}
+
+function excluirProduto(i){
+    produtos.splice(i, 1);
+    salvarProdutosLocalStorage();
+    renderProdutos();
+    renderAdminProdutos();
+    showToast("Produto removido", "error");
+}
+
+/* Controle de Modais */
 function abrirCarrinho(){
-document.getElementById("modalCarrinho").style.display = "flex";
-atualizar();
+    document.getElementById("modalCarrinho").style.display = "flex";
+    atualizarCarrinhoModal();
 }
 
-function fecharCarrinho(){
-document.getElementById("modalCarrinho").style.display = "none";
+function abrirConta(){
+    document.getElementById("modalConta").style.display = "flex";
+    atualizarPainelConta();
 }
 
+function abrirAdmin(){
+    if(!usuarioLogado || !usuarioLogado.isAdmin){
+        showToast("Acesso restrito ao administrador!", "error");
+        return;
+    }
+    document.getElementById("modalAdmin").style.display = "flex";
+    renderAdminProdutos();
+}
+
+function abrirSuporte(){
+    document.getElementById("modalSuporte").style.display = "flex";
+}
+
+function fecharModal(modalId){
+    document.getElementById(modalId).style.display = "none";
+}
+
+function toggleFaq(el){
+    let ans = el.querySelector(".faq-answer");
+    let icon = el.querySelector(".fa-chevron-down");
+    if(ans.style.display === "block"){
+        ans.style.display = "none";
+        icon.style.transform = "rotate(0deg)";
+    } else {
+        ans.style.display = "block";
+        icon.style.transform = "rotate(180deg)";
+    }
+}
+
+/* Inicialização */
 renderProdutos();
-atualizarContador();
+atualizarContadorCart();
+atualizarPainelConta();
 </script>
 
 </body>
