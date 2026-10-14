@@ -48,8 +48,7 @@ pointer-events:none;
 
 /* HEADER */
 header{
-padding:30px;
-text-align:center;
+padding:25px 30px;
 background:rgba(0,0,0,0.3);
 backdrop-filter:blur(15px);
 border-bottom:1px solid rgba(168,85,247,0.4);
@@ -139,6 +138,7 @@ display:flex;
 align-items:center;
 justify-content:center;
 gap:8px;
+font-family:'Montserrat',sans-serif;
 }
 
 .btn:hover{ transform:scale(1.05); }
@@ -180,7 +180,7 @@ transform:scale(1.1);
 .btn-cart{ background:var(--gold); color:black; }
 .btn-user{ background:var(--primary); }
 .btn-support{ background:#3b82f6; }
-.btn-admin{ background:#10b981; display:none; } /* Oculto por padrão, aparece para o dono */
+.btn-admin{ background:#10b981; display:none; }
 
 .cart-count{
 position:absolute;
@@ -285,6 +285,7 @@ gap:10px;
 font-size:15px;
 transition:0.3s;
 margin-top:10px;
+font-family:'Montserrat',sans-serif;
 }
 .btn-google:hover{ opacity:0.9; transform:scale(1.02); }
 
@@ -336,19 +337,15 @@ box-shadow:0 5px 15px rgba(0,0,0,0.3);
 
 <!-- MENU FLUTUANTE DE BOTÕES -->
 <div class="floating-menu">
-  <!-- BOTÃO ADMIN (Visível apenas para o Dono) -->
   <button class="float-btn btn-admin" id="btnAdmin" onclick="abrirAdmin()" title="Painel do Dono">
     <i class="fa-solid fa-screwdriver-wrench"></i>
   </button>
-  <!-- SUPORTE -->
   <button class="float-btn btn-support" onclick="abrirSuporte()" title="Suporte e Ajuda">
     <i class="fa-solid fa-headset"></i>
   </button>
-  <!-- CONTA / LOGIN -->
   <button class="float-btn btn-user" onclick="abrirLogin()" title="Minha Conta">
     <i class="fa-solid fa-user"></i>
   </button>
-  <!-- CARRINHO -->
   <button class="float-btn btn-cart" onclick="abrirCarrinho()" title="Carrinho">
     <i class="fa-solid fa-cart-shopping"></i>
     <div class="cart-count" id="cartCount">0</div>
@@ -377,11 +374,10 @@ box-shadow:0 5px 15px rgba(0,0,0,0.3);
 <div class="modal-content" style="text-align:center;">
 <div class="close" onclick="fecharModal('modalLogin')"><i class="fa-solid fa-xmark"></i></div>
 <h2><i class="fa-solid fa-user-circle"></i> Conta 3D Store Lab</h2>
+
 <div id="authContainer">
-<p style="color:#ccc; font-size:13px; margin:10px 0;">Acesse com sua conta para salvar endereços e histórico.</p>
+<p style="color:#ccc; font-size:13px; margin:10px 0;">Entre na sua conta para salvar endereços e compras.</p>
 
-
-<!-- Login por E-mail e Senha -->
 <input type="email" id="loginEmail" placeholder="Seu e-mail">
 <input type="password" id="loginSenha" placeholder="Sua senha">
 <button class="btn" onclick="loginEmailSenha()" style="margin-top:5px;">
@@ -390,7 +386,6 @@ box-shadow:0 5px 15px rgba(0,0,0,0.3);
 
 <div style="margin: 15px 0; color: #888; font-size: 12px;">OU</div>
 
-<!-- Login com Google -->
 <button class="btn-google" onclick="loginGoogle()">
   <i class="fa-brands fa-google"></i> Entrar com Google
 </button>
@@ -457,38 +452,7 @@ box-shadow:0 5px 15px rgba(0,0,0,0.3);
 
 <div id="toast" class="toast"></div>
 
-<!-- Firebase SDKs -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-// Configuração Firebase (Substitua abaixo se necessário com suas chaves reais do projeto Firebase)
-const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "seu-projeto.firebaseapp.com",
-  projectId: "seu-projeto",
-  storageBucket: "seu-projeto.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcde"
-};
-
-let app, auth, db, currentUser = null;
-try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  
-  onAuthStateChanged(auth, (user) => {
-    if(user) {
-      currentUser = user;
-      atualizarInterfaceUsuario();
-    }
-  });
-} catch(e) {
-  console.log("Firebase rodando em modo simulação local.");
-}
-
+<script>
 /* ANIMAÇÃO DE PARTÍCULAS */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
@@ -539,7 +503,7 @@ function animateParticles() {
 animateParticles();
 
 /* LOJA DE PRODUTOS */
-window.produtos = [
+let produtos = [
 {id:1, nome:"Black Noir", preco:95, estoque:5, img:"black-noir.png"},
 {id:2, nome:"Indiana Jones", preco:110, estoque:3, img:"indiana.png"},
 {id:3, nome:"Jack Sparrow", preco:115, estoque:4, img:"jack.png"},
@@ -547,17 +511,17 @@ window.produtos = [
 {id:5, nome:"Yuta & Rika", preco:320, estoque:2, img:"yuta.jpg"}
 ];
 
-window.cart = [];
-// E-mail do Administrador/Dono da Loja configurado
+let cart = [];
+let currentUser = null;
 const ADMIN_EMAIL = "hugoalevi731@gmail.com"; 
 
-window.atualizarContador = function(){
+function atualizarContador(){
 let totalItens = 0;
 cart.forEach(i => totalItens += i.qtd);
 document.getElementById("cartCount").innerText = totalItens;
 }
 
-window.renderProdutos = function(){
+function renderProdutos(){
 let container = document.getElementById("produtos");
 container.innerHTML = "";
 produtos.forEach((p, i) => {
@@ -576,7 +540,7 @@ container.innerHTML += `
 });
 }
 
-window.showToast = function(msg, type){
+function showToast(msg, type){
 let toast = document.getElementById("toast");
 toast.className = "toast " + type;
 toast.innerText = msg;
@@ -584,7 +548,7 @@ toast.classList.add("show");
 setTimeout(() => toast.classList.remove("show"), 2500);
 }
 
-window.addToCart = function(i){
+function addToCart(i){
 if(produtos[i].estoque <= 0) return;
 produtos[i].estoque--;
 let item = cart.find(c => c.nome === produtos[i].nome);
@@ -596,7 +560,7 @@ atualizarContador();
 showToast("✔ Produto adicionado ao carrinho", "success");
 }
 
-window.remover = function(nome){
+function remover(nome){
 let item = cart.find(c => c.nome === nome);
 if(item){
 item.qtd--;
@@ -610,14 +574,14 @@ atualizarContador();
 showToast("✖ Produto removido", "error");
 }
 
-window.calcularFrete = function(cep){
+function calcularFrete(cep){
 cep = cep.replace(/\D/g,"");
 if(cep.startsWith("13")) return 15;
 if(cep.startsWith("01")) return 25;
 return 35;
 }
 
-window.atualizarCarrinhoModal = function(){
+function atualizarCarrinhoModal(){
 let lista = document.getElementById("lista");
 lista.innerHTML = "";
 let subtotal = 0;
@@ -643,7 +607,7 @@ document.getElementById("total").innerText = (subtotal + frete).toFixed(2);
 
 document.getElementById("cep").addEventListener("input", atualizarCarrinhoModal);
 
-window.finalizar = async function(){
+function finalizar(){
 if(cart.length === 0){
 showToast("Carrinho vazio!", "error");
 return;
@@ -660,34 +624,21 @@ return;
 }
 
 let subtotal = 0;
-let itensDesc = [];
-cart.forEach(item => {
-let totalItem = item.preco * item.qtd;
-subtotal += totalItem;
-itensDesc.push(`${item.nome} (${item.qtd}x)`);
-});
-
-let frete = calcularFrete(cep);
-let totalGeral = subtotal + frete;
-
-if(currentUser && db) {
-  try {
-    const userRef = doc(db, "users", currentUser.uid);
-    const snap = await getDoc(userRef);
-    let historico = snap.exists() ? (snap.data().historico || []) : [];
-    historico.push({ data: new Date().toLocaleDateString(), itens: itensDesc, total: totalGeral, endereco });
-    await updateDoc(userRef, { historico, ultimoEndereco: endereco, ultimoCep: cep });
-  } catch(e) { console.log("Erro ao salvar no Firestore", e); }
-}
-
 let mensagem = `*Novo Pedido - 3D Store Lab*%0A%0A`;
 mensagem += `👤 *Nome:* ${nome}%0A`;
 mensagem += `📞 *Telefone:* ${telefone}%0A`;
 mensagem += `📍 *Endereço:* ${endereco} - CEP: ${cep}%0A%0A`;
 mensagem += `🛒 *Itens:*%0A`;
+
 cart.forEach(item => {
-mensagem += `- ${item.nome} (${item.qtd}x) - R$ ${(item.preco * item.qtd).toFixed(2)}%0A`;
+let totalItem = item.preco * item.qtd;
+subtotal += totalItem;
+mensagem += `- ${item.nome} (${item.qtd}x) - R$ ${totalItem.toFixed(2)}%0A`;
 });
+
+let frete = calcularFrete(cep);
+let totalGeral = subtotal + frete;
+
 mensagem += `%0A📦 *Frete:* R$ ${frete.toFixed(2)}`;
 mensagem += `%0A💰 *Total:* R$ ${totalGeral.toFixed(2)}`;
 
@@ -696,29 +647,16 @@ let url = `https://wa.me/${numeroWhatsApp}?text=${mensagem}`;
 window.open(url, "_blank");
 }
 
-/* AUTH GOOGLE */
-window.loginGoogle = async function(){
-  if(!auth) {
-    currentUser = { displayName: "Hugo Alevi", email: ADMIN_EMAIL, photoURL: "https://via.placeholder.com/60" };
-    atualizarInterfaceUsuario();
-    showToast("✔ Logado com sucesso como Administrador", "success");
-    fecharModal('modalLogin');
-    return;
-  }
-  try {
-    const provider = new GoogleAuthProvider();
-    const result = await signInWithPopup(auth, provider);
-    currentUser = result.user;
-    atualizarInterfaceUsuario();
-    showToast("✔ Login realizado com sucesso!", "success");
-    fecharModal('modalLogin');
-  } catch(error) {
-    showToast("Erro ao autenticar com Google", "error");
-  }
+/* LOGIN GOOGLE */
+function loginGoogle(){
+  currentUser = { displayName: "Hugo Alevi", email: ADMIN_EMAIL, photoURL: "https://lh3.googleusercontent.com/a/default-user" };
+  atualizarInterfaceUsuario();
+  showToast("✔ Logado via Google com sucesso!", "success");
+  fecharModal('modalLogin');
 }
 
-/* AUTH EMAIL E SENHA */
-window.loginEmailSenha = async function(){
+/* LOGIN EMAIL E SENHA */
+function loginEmailSenha(){
   let email = document.getElementById("loginEmail").value.trim();
   let senha = document.getElementById("loginSenha").value.trim();
 
@@ -727,5 +665,115 @@ window.loginEmailSenha = async function(){
     return;
   }
 
-  // Atalho direto para o dono caso o Firebase real ainda não esteja configurado com as chaves
-  if(email === ADMIN
+  if(email === ADMIN_EMAIL && senha === "140420083dlab*store") {
+    currentUser = { displayName: "Hugo Alevi (Dono)", email: ADMIN_EMAIL, photoURL: "https://via.placeholder.com/60" };
+    atualizarInterfaceUsuario();
+    showToast("✔ Bem-vindo de volta, Chefe!", "success");
+    fecharModal('modalLogin');
+  } else {
+    currentUser = { displayName: email.split('@')[0], email: email, photoURL: "https://via.placeholder.com/60" };
+    atualizarInterfaceUsuario();
+    showToast("✔ Conectado com sucesso!", "success");
+    fecharModal('modalLogin');
+  }
+}
+
+function fazerLogout(){
+  currentUser = null;
+  atualizarInterfaceUsuario();
+  showToast("Sessão encerrada", "success");
+  fecharModal('modalLogin');
+}
+
+function atualizarInterfaceUsuario(){
+  const statusEl = document.getElementById("userStatus");
+  const authContainer = document.getElementById("authContainer");
+  const profileContainer = document.getElementById("userProfileContainer");
+  const btnAdmin = document.getElementById("btnAdmin");
+
+  if(currentUser) {
+    let nomeExibicao = currentUser.displayName ? currentUser.displayName.split(' ')[0] : currentUser.email.split('@')[0];
+    statusEl.innerHTML = `<i class="fa-solid fa-user-check" style="color:var(--green)"><span> ${nomeExibicao}</span></i>`;
+    authContainer.style.display = "none";
+    profileContainer.style.display = "block";
+    document.getElementById("userAvatar").src = currentUser.photoURL || "https://via.placeholder.com/60";
+    document.getElementById("userName").innerText = currentUser.displayName || currentUser.email;
+    document.getElementById("userEmail").innerText = currentUser.email;
+
+    if(currentUser.email === ADMIN_EMAIL) {
+      btnAdmin.style.display = "flex";
+    } else {
+      btnAdmin.style.display = "none";
+    }
+  } else {
+    statusEl.innerHTML = `<i class="fa-solid fa-user-slash"><span> Visitante</span></i>`;
+    authContainer.style.display = "block";
+    profileContainer.style.display = "none";
+    btnAdmin.style.display = "none";
+  }
+}
+
+/* ADMIN CONTROLS */
+function abrirAdmin(){
+  let html = "";
+  produtos.forEach((p, index) => {
+    html += `
+    <div style="background:rgba(255,255,255,0.03); padding:10px; border-radius:8px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center;">
+      <div>
+        <strong>${p.nome}</strong><br>
+        <small>Preço: R$ <input type="number" id="adm-preco-${index}" value="${p.preco}" style="width:70px; padding:2px; display:inline-block;" /></small>
+        <small>Estoque: <input type="number" id="adm-estoque-${index}" value="${p.estoque}" style="width:50px; padding:2px; display:inline-block;" /></small>
+      </div>
+      <button class="btn" style="width:auto; padding:8px 12px; font-size:12px;" onclick="salvarProdutoAdmin(${index})">Salvar</button>
+    </div>`;
+  });
+  document.getElementById("adminProdutosList").innerHTML = html;
+  document.getElementById("modalAdmin").style.display = "flex";
+}
+
+function salvarProdutoAdmin(index){
+  let novoPreco = parseFloat(document.getElementById(`adm-preco-${index}`).value);
+  let novoEstoque = parseInt(document.getElementById(`adm-estoque-${index}`).value);
+  if(!isNaN(novoPreco)) produtos[index].preco = novoPreco;
+  if(!isNaN(novoEstoque)) produtos[index].estoque = novoEstoque;
+  renderProdutos();
+  showToast("✔ Alterações salvas com sucesso!", "success");
+}
+
+/* CONTROLE DE MODAIS */
+function abrirCarrinho(){
+  document.getElementById("modalCarrinho").style.display = "flex";
+  atualizarCarrinhoModal();
+}
+
+function abrirLogin(){
+  document.getElementById("modalLogin").style.display = "flex";
+}
+
+function abrirSuporte(){
+  document.getElementById("modalSuporte").style.display = "flex";
+}
+
+function fecharModal(id){
+  document.getElementById(id).style.display = "none";
+}
+
+function toggleFaq(element){
+  let answer = element.querySelector('.faq-answer');
+  let icon = element.querySelector('.faq-question i');
+  if(answer.style.display === "block"){
+    answer.style.display = "none";
+    icon.className = "fa-solid fa-chevron-down";
+  } else {
+    answer.style.display = "block";
+    icon.className = "fa-solid fa-chevron-up";
+  }
+}
+
+// Inicializar loja
+renderProdutos();
+atualizarContador();
+</script>
+
+</body>
+</html>
