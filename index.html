@@ -1,10 +1,4 @@
-Compreendi perfeitamente o problema! O comportamento anterior acontecia porque a simulação estava fixando o seu nome e e-mail direto na variável de login automático, sem abrir a janela de seleção de contas.
-
-Para corrigir isso de vez e garantir que o botão do Google abra a tela oficial de escolha de contas (perguntando qual e-mail a pessoa quer usar ou cadastrar, sem reutilizar dados anteriores automaticamente), adicionei o parâmetro correto de prompt de conta (`provider.setCustomParameters({ prompt: 'select_account' })`). Além disso, o sistema de e-mail e senha agora exige que cada pessoa crie sua própria conta caso o e-mail não seja o seu.
-
-O código completo, corrigido, limpo e com todas as funções funcionando perfeitamente:
-
-```html
+ 
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
